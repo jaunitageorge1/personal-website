@@ -23,8 +23,8 @@ extraScripts: ["/assets/js/contact.js"]
         {%- endfor %}
       </ul>
       <div class="btn-row">
-        <a href="/services/" class="btn btn-primary">View services</a>
-        <a href="/speaking/" class="btn btn-ghost">See my talks</a>
+        <a href="{{ "/services/" | url }}" class="btn btn-primary">View services</a>
+        <a href="{{ "/speaking/" | url }}" class="btn btn-ghost">See my talks</a>
       </div>
     </div>
     <div class="hero-portrait lighten">
@@ -78,7 +78,7 @@ extraScripts: ["/assets/js/contact.js"]
       </li>
       {%- endfor %}
     </ol>
-    <p class="btn-row"><a href="/services/" class="btn btn-secondary">All services in detail</a></p>
+    <p class="btn-row"><a href="{{ "/services/" | url }}" class="btn btn-secondary">All services in detail</a></p>
   </section>
 
   <section class="section" aria-labelledby="projects-h">
@@ -129,7 +129,7 @@ extraScripts: ["/assets/js/contact.js"]
       <div class="card">
         <h3 class="card-kicker">Contract &amp; fractional</h3>
         <p class="card-body">Project-based or ongoing: audits, training, courseware, writing, accessible builds and photography — scoped to your timeline. Fractional accessibility leadership if you need a program stood up without a full-time hire.</p>
-        <p class="btn-row"><a href="/services/" class="btn btn-secondary">See services</a></p>
+        <p class="btn-row"><a href="{{ "/services/" | url }}" class="btn btn-secondary">See services</a></p>
       </div>
       <div class="card">
         <h3 class="card-kicker">Full-time</h3>
@@ -142,7 +142,7 @@ extraScripts: ["/assets/js/contact.js"]
         <p class="btn-row"><a href="#contact" class="btn btn-secondary">Send me a role</a></p>
         <p class="resume-links">Role-specific résumés (accessible HTML · tagged-PDF ready):
           {%- for cv in resumes.items %}
-          <a href="/resume/{{ cv.slug }}/">{{ cv.label }}</a>{% if not loop.last %} · {% endif %}
+          <a href="{{ ("/resume/" + cv.slug + "/") | url }}">{{ cv.label }}</a>{% if not loop.last %} · {% endif %}
           {%- endfor %}
         </p>
       </div>

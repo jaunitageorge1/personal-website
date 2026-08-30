@@ -2,8 +2,12 @@
 permalink: /robots.txt
 eleventyExcludeFromCollections: true
 ---
+{#- Note: crawlers only read robots.txt from a domain root. On a GitHub Pages
+    *project* site this file sits at /<repo>/robots.txt and is therefore
+    ignored — it takes effect once a custom domain is attached. Nothing here is
+    load-bearing: the only page that should stay out of an index carries its
+    own <meta name="robots" content="noindex">. -#}
 User-agent: *
 Allow: /
-Disallow: /thanks/
 
-Sitemap: {{ site.url }}/sitemap.xml
+Sitemap: {{ "/sitemap.xml" | url | absoluteUrl(site.url) }}

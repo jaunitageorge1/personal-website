@@ -8,7 +8,10 @@ was deliberately overruled, and what a human still has to check.
 ## What is verified on every build
 
 `npm run check` builds the site and then runs four audits. All exit non-zero on
-failure, so they gate a deploy.
+failure, and they really do gate the deploy: `.github/workflows/deploy.yml`
+runs them before uploading to GitHub Pages, against the same prefixed build
+that ships, so a change that breaks this page's claims cannot reach the live
+URL. `.github/workflows/check.yml` runs the same suite on every pull request.
 
 ### `npm run check:a11y`
 

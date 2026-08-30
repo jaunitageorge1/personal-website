@@ -9,11 +9,11 @@ layout: layouts/base.njk
     and the download control sit inside a landmark like everything else. -#}
 <header class="resume-toolbar no-print">
   <nav aria-label="Site">
-    <a class="back-link" href="/"><span aria-hidden="true">←</span> Back to jaunitaflessas.com</a>
+    <a class="back-link" href="{{ "/" | url }}"><span aria-hidden="true">←</span> Back to jaunitaflessas.com</a>
   </nav>
   <span class="spacer"></span>
   <span class="role-label">Résumé — {{ cv.label }}</span>
-  <a class="btn btn-primary" href="/assets/resumes/jaunita-flessas-{{ cv.slug }}.pdf">
+  <a class="btn btn-primary" href="{{ ("/assets/resumes/jaunita-flessas-" + cv.slug + ".pdf") | url }}">
     Download PDF<span class="visually-hidden"> — {{ cv.label }} résumé, tagged for screen readers</span>
   </a>
 </header>
@@ -35,7 +35,7 @@ layout: layouts/base.njk
       </p>
       {%- if resumes.contact.showDirectContact %}
       <noscript>
-        <p class="doc-contact">Email and phone are shown with JavaScript enabled, which keeps them away from address harvesters. They are printed in full on the PDF above, or reach me through the <a href="/#contact">contact form</a>.</p>
+        <p class="doc-contact">Email and phone are shown with JavaScript enabled, which keeps them away from address harvesters. They are printed in full on the PDF above, or reach me through the <a href="{{ "/#contact" | url }}">contact form</a>.</p>
       </noscript>
       {%- endif %}
     </header>
@@ -72,4 +72,4 @@ layout: layouts/base.njk
     button. The PDF link above needs no scripting and is always present.
     Kept in a file rather than inline so the site can ship a strict
     Content-Security-Policy with no 'unsafe-inline'. -#}
-<script src="/assets/js/resume-print.js" defer></script>
+<script src="{{ "/assets/js/resume-print.js" | url }}" defer></script>

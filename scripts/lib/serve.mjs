@@ -31,9 +31,26 @@ function productionHeaders(file = "netlify.toml") {
   );
 }
 
-export function serve(rootDir, port = 0, { headers = productionHeaders() } = {}) {
+/** The deployment sub-path, if the build was made for one (GitHub Pages). */
+function normalisePrefix(raw = process.env.PATH_PREFIX || "") {
+  const stripped = String(raw).trim().replace(/^\/+|\/+$/g, "");
+  return stripped ? `/${stripped}` : "";
+}
+
+export function serve(
+  rootDir,
+  port = 0,
+  { headers = productionHeaders(), pathPrefix = normalisePrefix() } = {}
+) {
   const server = createServer(async (req, res) => {
-    let path = join(rootDir, decodeURIComponent(req.url.split("?")[0]));
+    let requested = decodeURIComponent(req.url.split("?")[0]);
+    /* A build made for a sub-path emits links like /repo/services/. Serving it
+       at the root would 404 every one of them, so the prefix is stripped here
+       — which lets the audits run against exactly the build that deploys. */
+    if (pathPrefix && (requested === pathPrefix || requested.startsWith(pathPrefix + "/"))) {
+      requested = requested.slice(pathPrefix.length) || "/";
+    }
+    let path = join(rootDir, requested);
     if (existsSync(path) && statSync(path).isDirectory()) path = join(path, "index.html");
     if (!existsSync(path)) {
       res.writeHead(404, { "content-type": "text/plain" });

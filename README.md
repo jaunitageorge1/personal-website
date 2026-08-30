@@ -111,19 +111,59 @@ nothing.
 
 ## Deploying
 
-Configured for Netlify (`netlify.toml`): `npm run build`, publish `_site`. The
-build needs only Node 22 — the résumé PDFs are committed, so no browser is
-downloaded at deploy time.
+The site deploys to **GitHub Pages** from `.github/workflows/deploy.yml`, on
+every push to `main` (or on demand via *Actions → Deploy to GitHub Pages → Run
+workflow*).
 
-`netlify.toml` also sets a strict `Content-Security-Policy`. There is no inline
-script or style anywhere, so the policy needs no `unsafe-inline`. If you add an
-external resource, add it to the policy.
+One-time setup, which has to be done in the repository settings — it cannot be
+done from the workflow: **Settings → Pages → Build and deployment → Source:
+GitHub Actions**. Until that is set, the deploy job fails at the last step.
 
-Set the canonical URL for the sitemap and `<link rel="canonical">` via `site.js`
-→ `url`, or the `URL` environment variable. Netlify sets `URL` itself.
+The workflow builds, runs the whole audit suite, and only uploads if everything
+passes — so a change that breaks the site's WCAG 2.2 AA claim cannot reach the
+live URL. `.github/workflows/check.yml` runs the same audits on every pull
+request, plus a check that the committed résumé PDFs still match the résumé
+pages.
 
-Any static host works, but you would then need to replace the Netlify-specific
-pieces: the form backend and the headers block.
+### The path prefix
+
+A GitHub Pages project site is served under `/<repo>/`, not at the domain root,
+so every root-relative URL needs that prefix. `PATH_PREFIX` supplies it, and the
+workflow reads it from `actions/configure-pages`, which resolves to an empty
+path once a custom domain is attached — the same build works at a sub-path, at a
+domain root, and locally, with no edit.
+
+For this to hold, **every internal link and asset reference goes through
+Eleventy's `url` filter**. A hard-coded `/assets/…` will 404 in production while
+working perfectly on your machine. The QA audit checks that internal links
+resolve, and CI audits the prefixed build rather than a root-path one, so this
+is caught rather than discovered live.
+
+Fonts are referenced from the stylesheet relatively (`../fonts/…`), since CSS is
+copied through rather than templated.
+
+### Security headers
+
+GitHub Pages cannot set response headers, so the Content-Security-Policy ships
+as a `<meta http-equiv>` tag, first thing in `<head>`. It is declared once, in
+`site.js` → `csp`. There is no inline script or style anywhere, so no
+`unsafe-inline` is needed.
+
+A few directives — `frame-ancestors` among them — are only honoured in a real
+header and are filtered out of the meta version rather than left in to look
+reassuring. **That means no clickjacking protection on GitHub Pages.** If that
+matters, put the site behind a host that can send headers.
+
+### Deploying to Netlify instead
+
+`netlify.toml` is still committed and current: `npm run build`, publish `_site`,
+and it serves the full policy including the header-only directives. Netlify sets
+`URL` itself and needs no path prefix. The audits replay its headers locally
+(`scripts/lib/serve.mjs`), and the QA audit asserts its policy still matches
+`site.js`, so the two cannot drift apart.
+
+Any other static host works too; you would need to supply `URL` and, if serving
+from a sub-path, `PATH_PREFIX`.
 
 ## Known follow-ups
 
@@ -138,6 +178,11 @@ These are flagged in the design handoff and are the owner's calls, not bugs:
   environment. To localise it: download the file to `src/assets/images/`, point
   `home.js` → `photograph.src` at it, and drop `cdn.picflow.com` from `img-src`
   in `netlify.toml`.
+- **`robots.txt` has no effect on a GitHub Pages project site**, because
+  crawlers only read it from a domain root and this one is served under
+  `/<repo>/`. It starts working when a custom domain is attached. Nothing
+  depends on it — the one page that should stay unindexed carries its own
+  `noindex` tag.
 - **The embedded talk video** on the Speaking page needs its captions confirmed.
   Embedding it makes them this site's responsibility under WCAG 1.2.2, and that
   cannot be checked from the build. This is the one criterion the site cannot

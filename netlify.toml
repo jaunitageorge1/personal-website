@@ -23,7 +23,7 @@
     # form-action is kept even though the default contact form posts nowhere —
     # it opens the reader's mail app — so a switch to a hosted form backend is
     # a deliberate policy edit rather than a silent widening.
-    Content-Security-Policy = "default-src 'self'; img-src 'self' https://cdn.picflow.com data:; style-src 'self'; script-src 'self'; font-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' https://cdn.picflow.com data:; style-src 'self'; script-src 'self'; font-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"

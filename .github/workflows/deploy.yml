@@ -1,0 +1,67 @@
+# Build the site and publish it to GitHub Pages.
+#
+# The accessibility audits run before the upload and the job fails on any
+# finding, so a build that breaks the site's WCAG 2.2 AA claim never reaches
+# the live URL. They run against the same prefixed build that deploys, not a
+# separate root-path one — a broken link under /<repo>/ would otherwise pass
+# locally and 404 in production.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let a run in progress finish rather than
+# cancelling it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The audits drive a real browser.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # base_path is /<repo> for a project site and empty once a custom domain
+      # is attached, so the same build works either way with no edit here.
+      - name: Build and audit
+        run: npm run check
+        env:
+          PATH_PREFIX: ${{ steps.pages.outputs.base_path }}
+          URL: ${{ steps.pages.outputs.origin }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

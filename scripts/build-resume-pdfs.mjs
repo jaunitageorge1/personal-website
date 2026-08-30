@@ -12,12 +12,44 @@
  *
  *   npm run build && npm run resumes:pdf
  */
-import { mkdir, readdir, stat } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { launchChromium } from "./lib/browser.mjs";
 import { serve } from "./lib/serve.mjs";
 import resumes from "../src/_data/resumes.js";
 
 const OUT = "src/assets/resumes";
+
+/**
+ * Chromium stamps /CreationDate and /ModDate with the moment of the run, which
+ * is the only thing that differs between two builds of the same résumé — eight
+ * bytes out of ~190KB. Left alone, every regeneration shows up as a change to a
+ * committed binary and CI could never tell a real edit from a re-run.
+ *
+ * Both fields are fixed-width, so overwriting them in place keeps every xref
+ * offset valid. SOURCE_DATE_EPOCH is honoured if set (the reproducible-builds
+ * convention); otherwise a fixed date is used and the output is byte-identical
+ * across runs.
+ */
+const pdfDate = (epochSeconds) => {
+  const d = new Date(epochSeconds * 1000);
+  const p = (n, w = 2) => String(n).padStart(w, "0");
+  return `D:${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}` +
+         `${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}+00'00'`;
+};
+
+const FIXED_DATE = pdfDate(Number(process.env.SOURCE_DATE_EPOCH) || 1735689600); // 2025-01-01T00:00:00Z
+
+async function normaliseTimestamps(path) {
+  const buf = await readFile(path, "latin1");
+  const out = buf.replace(
+    /\/(CreationDate|ModDate) \(D:\d{14}[+-]\d{2}'\d{2}'\)/g,
+    (_, field) => `/${field} (${FIXED_DATE})`
+  );
+  if (out.length !== buf.length) {
+    throw new Error(`${path}: timestamp rewrite changed the file length, which would corrupt the xref table`);
+  }
+  await writeFile(path, out, "latin1");
+}
 
 const run = async () => {
   await mkdir(OUT, { recursive: true });
@@ -62,6 +94,7 @@ const run = async () => {
       margin: { top: "0.55in", bottom: "0.55in", left: "0.55in", right: "0.55in" },
     });
     await page.close();
+    await normaliseTimestamps(path);
     const { size } = await stat(path);
     console.log(`  ${path}  ${(size / 1024).toFixed(0)} KB`);
   }

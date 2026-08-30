@@ -28,6 +28,14 @@ import { serve } from "./lib/serve.mjs";
 const findings = [];
 const note = (page, kind, detail) => findings.push({ page, kind, detail });
 
+/* A build made for a GitHub Pages sub-path emits links like /repo/services/.
+   Strip it before resolving them against _site, or every link reads as broken. */
+const PATH_PREFIX = (process.env.PATH_PREFIX || "").trim().replace(/^\/+|\/+$/g, "");
+const unprefix = (target) =>
+  PATH_PREFIX && (target === `/${PATH_PREFIX}` || target.startsWith(`/${PATH_PREFIX}/`))
+    ? target.slice(PATH_PREFIX.length + 1) || "/"
+    : target;
+
 const VAGUE_LINK_TEXT = [
   "click here", "here", "read more", "more", "link", "this", "learn more", "details",
 ];
@@ -297,9 +305,10 @@ const htmlFiles = await Array.fromAsync(glob("_site/**/*.html"));
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const page = file.replace(/^_site/, "").replace(/index\.html$/, "");
-  for (const [, attr, target] of html.matchAll(/(href|src)="(\/[^"#?]*)"/g)) {
+  for (const [, attr, rawTarget] of html.matchAll(/(href|src)="(\/[^"#?]*)"/g)) {
+    const target = unprefix(rawTarget);
     const candidates = [join("_site", target), join("_site", target, "index.html")];
-    if (!candidates.some(existsSync)) note(page, "link", `${attr}="${target}" does not resolve`);
+    if (!candidates.some(existsSync)) note(page, "link", `${attr}="${rawTarget}" does not resolve`);
   }
   /* An in-page anchor must have something to land on. */
   for (const [, target] of html.matchAll(/href="#([^"]+)"/g)) {
@@ -347,6 +356,45 @@ for (const file of htmlFiles) {
     for (const result of report.results) {
       for (const m of result.messages) {
         note(page, "html", `${m.ruleId} line ${m.line}: ${m.message}`);
+      }
+    }
+  }
+}
+
+/* ---------- the two copies of the CSP must agree ---------- */
+
+/* The policy is declared once, in site.js, and shipped as a <meta> tag because
+   GitHub Pages cannot send headers. netlify.toml carries a second copy for the
+   host that can. Two copies drift; this makes them fail loudly instead. */
+{
+  const { default: site } = await import("../src/_data/site.js");
+  const parse = (policy) =>
+    new Set(policy.split(";").map((d) => d.trim().replace(/\s+/g, " ")).filter(Boolean));
+
+  const declared = parse(site.csp.full);
+  const metaDeclared = parse(site.csp.meta);
+
+  const toml = existsSync("netlify.toml") ? await readFile("netlify.toml", "utf8") : "";
+  const served = toml.match(/Content-Security-Policy\s*=\s*"([^"]*)"/);
+  if (served) {
+    const shipped = parse(served[1]);
+    for (const d of declared) if (!shipped.has(d)) note("netlify.toml", "csp", `missing directive: ${d}`);
+    for (const d of shipped) if (!declared.has(d)) note("netlify.toml", "csp", `extra directive not in site.js: ${d}`);
+  }
+
+  /* And the meta tag the pages actually carry must be the meta-safe subset. */
+  const home = await readFile("_site/index.html", "utf8");
+  const tag = home.match(/http-equiv="Content-Security-Policy" content="([^"]*)"/);
+  if (!tag) note("/", "csp", "no Content-Security-Policy meta tag in the built page");
+  else {
+    const inPage = parse(tag[1].replace(/&#39;/g, "'").replace(/&amp;/g, "&"));
+    for (const d of metaDeclared) if (!inPage.has(d)) note("/", "csp", `meta tag missing directive: ${d}`);
+    /* Directives a browser ignores inside <meta> must not be there pretending
+       to protect something. */
+    for (const d of inPage) {
+      const name = d.split(" ")[0];
+      if (["frame-ancestors", "report-uri", "report-to", "sandbox"].includes(name)) {
+        note("/", "csp", `${name} has no effect in a meta tag and should not be there`);
       }
     }
   }
