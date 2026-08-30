@@ -591,10 +591,13 @@ textarea.input { min-height: 7rem; resize: vertical; }
   border: 1px solid var(--color-neutral-700);
 }
 .video-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
-/* An <iframe> sits in the tab order, but no browser paints a focus ring on
-   one — tab to the video and nothing appears to happen. The ring has to go on
-   the wrapper rather than the iframe, because the wrapper clips its overflow
-   and would cut an outline drawn on the child. */
+/* Defensive only, and worth being honest about what it does and does not do:
+   tabbing to an <iframe> moves focus *into* the embedded document, where
+   `iframe:focus` never matches and this rule therefore never fires. It covers
+   the case where focus is put on the element itself — programmatically, or by
+   a browser that behaves that way — and nothing more. Indicating focus inside
+   the player is the player's job. On the wrapper rather than the iframe
+   because the wrapper clips its overflow. */
 .video-frame:focus-within {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;

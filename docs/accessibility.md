@@ -159,14 +159,8 @@ carries intrinsic `width`/`height`, so nothing shifts as the page settles.
 
 **Keyboard.** A skip link on every page, focus never removed (only restyled),
 and a visible `:focus-visible` ring at 2px with 2px offset that clears 3:1 on
-every ground it appears over. The embedded video is the exception that needed
-handling: an `<iframe>` sits in the tab order but no browser paints a ring on
-one, so tabbing to it appeared to do nothing. The ring is drawn on the wrapper
-via `:focus-within`, because the wrapper clips its overflow and would cut an
-outline on the iframe itself. CI caught this; the audit now focuses every
-iframe directly and checks for an indicator, rather than relying on Tab
-reaching it — whether it does depends on the embedded document loading, which
-the audit blocks. The résumé's Print button is added by script only
+every ground it appears over. The one place the page cannot reach is the
+embedded video — see below. The résumé's Print button is added by script only
 after scripting is confirmed available, so no reader is offered a dead control;
 the PDF download beside it is a plain link and always works.
 
@@ -236,6 +230,30 @@ Anything in it aborts the send silently, leaving no status trace.
 Switching `form.provider` in `src/_data/site.js` to `netlify` or `formspree`
 swaps in a real backend that works with scripting switched off; the script then
 does nothing. Neither option renders the address either.
+
+## The embedded video and keyboard focus
+
+Tabbing to the YouTube embed moves focus **into** the embedded document, not
+onto the `<iframe>` element. Measured in Chromium: after Tab, `activeElement`
+is the iframe, but `iframe:focus` is false and no ancestor matches
+`:focus-within` — so the embedding page has no selector that can draw a ring
+for that state. The same iframe *does* match `:focus` when focused
+programmatically, which is the trap: a `:focus-within` ring on the wrapper
+looks like a fix and passes a naive check while doing nothing for the keyboard
+user. That rule is kept, but only as defensive styling for the programmatic
+case, and its comment says so.
+
+Indicating focus inside the player is the player's job, and YouTube's controls
+carry their own focus styling. The QA audit therefore treats "focus moved into
+a nested browsing context" as out of this page's hands rather than reporting a
+failure it cannot fix. The exemption is deliberately narrow — it applies only
+when the focused element is an iframe that does not itself match `:focus`;
+removing the site's focus ring still produces 72 findings, so the check has not
+been blinded.
+
+**The manual check this replaces:** tab into the video and confirm the player
+shows a visible focus indicator on its controls. That is part of confirming the
+embed, alongside its captions.
 
 ## Open item: the embedded talk video
 
