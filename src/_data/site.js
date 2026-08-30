@@ -17,16 +17,35 @@ export default {
     codecamp: "https://a11y-codecamp.netlify.app/",
     globa11y: "https://accessiblecommunity.org/globa11y/",
   },
-  /* Where the contact form posts.
-     - "netlify": Netlify Forms handles the POST server-side, including the
-       honeypot check. Nothing else to configure; the form works with
-       JavaScript switched off.
+  /* How the contact form sends.
+
+     - "mailto" (default, and what the design handoff specifies): on submit the
+       form opens the reader's own email app with everything pre-filled. No
+       server, no third party, and nothing to configure. The address is
+       assembled at runtime from a build-time encoding, so the literal string
+       appears in no file the site serves — see the note on `mailto` below.
+       Requires JavaScript; without it the form is not rendered at all and the
+       contact section falls back to LinkedIn.
+     - "netlify": Netlify Forms handles the POST and the honeypot check
+       server-side. Works with JavaScript switched off.
      - "formspree": set `endpoint` to your form's URL. Also works without JS.
-     - "none": the form is not rendered at all, and the contact section falls
-       back to the LinkedIn link.
+     - "none": no form; the contact section falls back to LinkedIn.
+
      No option renders an email address into the HTML. */
   form: {
-    provider: "netlify",
+    provider: "mailto",
+
+    /* Split so the address is never one literal string, and base64-encoded at
+       build time so it is not greppable in the served JavaScript either.
+
+       Be clear-eyed about what this buys: it stops address-harvesting
+       crawlers, which read markup and do not run scripts. It is not secrecy —
+       anyone who opens the network tab or clicks Send can read the address.
+       That is the accepted trade for a form that needs no backend. */
+    mailto: { user: "jaunitaflessas", domain: "gmail.com" },
+    subjectPrefix: "[Site]",
+
+    /* Used by the netlify and formspree providers only. */
     endpoint: "https://formspree.io/f/REPLACE_ME",
     successUrl: "/thanks/",
   },

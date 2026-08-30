@@ -36,7 +36,6 @@ body {
     radial-gradient(68.75rem 50rem at -10% 100%,
       color-mix(in srgb, black 30%, transparent), transparent 55%),
     var(--color-bg);
-  background-attachment: fixed;
   /* Long words and URLs wrap rather than forcing the page sideways at 320px. */
   overflow-wrap: break-word;
 }
@@ -78,7 +77,7 @@ a:hover { color: var(--color-accent-200); }
 }
 ::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
 
-.text-muted { color: color-mix(in srgb, var(--color-text) 62%, transparent); }
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
 
 /* Available to assistive technology, invisible on screen. Never display:none. */
 .visually-hidden {
@@ -174,7 +173,7 @@ a:hover { color: var(--color-accent-200); }
   display: block;
   font-size: var(--fs-12);
   margin-bottom: 0.3125rem;
-  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
 }
 .input {
   width: 100%;
@@ -314,7 +313,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
   font-size: var(--fs-11);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
   padding: var(--space-2);
   border-bottom: 1px solid transparent;
 }
@@ -437,7 +436,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
   line-height: var(--lead);
   max-width: 58ch;
   margin: var(--lead-3) 0 0;
-  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
 }
 .hero-note a { text-decoration: underline; }
 .hero-tags { margin-top: var(--lead-3); }
@@ -608,7 +607,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
 .quote-attribution {
   font-size: var(--fs-15-5);
   line-height: var(--lead);
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
   margin: 2.625rem 0 0;
   text-indent: -1.267em;
 }
@@ -623,9 +622,29 @@ textarea.input { min-height: 7rem; resize: vertical; }
 .contact-note {
   font-size: var(--fs-13);
   line-height: 1.6;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
   margin: 0;
 }
+/* The no-script explanation, and the status line the script writes into after
+   handing the message to the mail app. Both are notices rather than decoration,
+   so they carry an accent edge and real padding instead of relying on colour. */
+.form-notice,
+.contact-status:not(:empty) {
+  margin: 0;
+  padding: 0.75rem 0.875rem;
+  font-size: var(--fs-14);
+  line-height: 1.6;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+.form-notice a,
+.contact-status a { text-decoration: underline; }
+/* Empty at rest, and taking no space — but always in the DOM, because a live
+   region has to exist before content is put into it to be announced. */
+.contact-status:empty { display: none; }
+
 .field-hint {
   font-size: var(--fs-12);
   line-height: 1.5;
@@ -670,7 +689,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
   font-size: var(--fs-15-5);
   line-height: var(--lead);
 }
-.upcoming-where { color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.upcoming-where { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
 
 .section-talks { padding: 2.625rem 0 3.5rem; }
 .section-talks .section-title { margin-bottom: 1.75rem; }
@@ -682,11 +701,11 @@ textarea.input { min-height: 7rem; resize: vertical; }
 .table-talks { min-width: 34rem; }
 .table-talks td:first-child { font-feature-settings: "tnum" 1; white-space: nowrap; }
 .table-talks .col-year { width: 8ch; }
-.table-talks .cell-event { color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.table-talks .cell-event { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
 .table-note {
   font-size: var(--fs-15-5);
   line-height: var(--lead);
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
   margin: 1.75rem 0 0;
 }
 .table-note a { text-decoration: underline; }
@@ -702,7 +721,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
 }
 .pub-list li { font-size: var(--fs-15-5); line-height: var(--lead); }
 .pub-list a { text-decoration: underline; }
-.pub-meta { color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.pub-meta { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
 
 /* — training catalogue band — */
 .topic-cols {
@@ -728,7 +747,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
 .topic-note {
   font-size: var(--fs-15-5);
   line-height: var(--lead);
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
   margin: var(--lead-3) 0 0;
   max-width: 44ch;
 }
@@ -781,7 +800,7 @@ textarea.input { min-height: 7rem; resize: vertical; }
   padding: 0 var(--gutter) 3.5rem;
   font-size: var(--fs-13);
   line-height: var(--lead);
-  color: color-mix(in srgb, var(--color-text) 62%, transparent);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
 }
 .site-footer-spaced { padding-top: 3.5rem; }
 .site-footer a { text-decoration: underline; }

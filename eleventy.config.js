@@ -17,6 +17,13 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addFilter("isoDate", (d) => new Date(d).toISOString());
 
+  // Used to encode the contact address at build time, so the literal string is
+  // absent from every file the site serves.
+  eleventyConfig.addFilter("base64", (s) => Buffer.from(String(s), "utf8").toString("base64"));
+  eleventyConfig.addFilter("base64List", (list) =>
+    list.map((s) => Buffer.from(String(s), "utf8").toString("base64"))
+  );
+
   return {
     dir: {
       input: "src",

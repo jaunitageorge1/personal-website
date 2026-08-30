@@ -35,9 +35,15 @@ navCta:
       <p class="btn-row"><a href="{{ speaking.featured.watchUrl }}" class="btn btn-ghost">Watch on YouTube<span class="visually-hidden"> (external site)</span></a></p>
     </div>
     <div class="video-frame">
-      {#- The iframe is titled so it is announced as something meaningful when
-          a screen-reader user lands on it in the frames list. -#}
-      <iframe src="https://www.youtube-nocookie.com/embed/{{ speaking.featured.videoId }}"
+      {#- Titled, so it is announced as something meaningful when a
+          screen-reader user lands on it in the frames list.
+
+          cc_load_policy=1 turns captions on by default. Embedding a video
+          makes its captions this page's responsibility under SC 1.2.2, and
+          that cannot be verified from here — confirm the upload is captioned
+          on YouTube (auto-generated captions do not satisfy 1.2.2).
+          See docs/accessibility.md. -#}
+      <iframe src="https://www.youtube-nocookie.com/embed/{{ speaking.featured.videoId }}?cc_load_policy=1"
               title="{{ speaking.featured.videoTitle }}"
               loading="lazy"
               allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
@@ -51,8 +57,8 @@ navCta:
     {#- A table wider than a narrow viewport scrolls inside its own region
         rather than dragging the page sideways. The region is focusable so it
         can be scrolled from the keyboard, and named so its purpose is clear. -#}
-    <div class="scroll-region" role="region" tabindex="0"
-         aria-label="Selected talks table, scrolls horizontally on small screens">
+    <section class="scroll-region" tabindex="0"
+             aria-label="Selected talks table, scrolls horizontally on small screens">
       <table class="table table-talks">
         <caption class="visually-hidden">Selected conference talks by year, title and event</caption>
         <thead>
@@ -72,7 +78,7 @@ navCta:
           {%- endfor %}
         </tbody>
       </table>
-    </div>
+    </section>
     <p class="table-note">Full history — 29 talks since 2022 — available on request, or see <a href="{{ site.links.empowerTalks }}">empoweraccessibility.com/talks</a>.</p>
   </section>
 </div>

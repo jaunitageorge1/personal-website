@@ -88,18 +88,18 @@ const checks = [
   text("body text", "--color-text", PAGE),
   text(".lede / .hero-intro", "--color-text", PAGE),
   text(".prose (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".hero-note (78%)", mix("--color-text", 78, PAGE), PAGE),
+  text(".hero-note (70%)", mix("--color-text", 70, PAGE), PAGE),
   text(".svc-copy (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".quote-attribution (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".table-note / .pub-meta (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".upcoming-where (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".contact-note (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".resume-links (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".field label (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".site-footer (62%)", mix("--color-text", 62, PAGE), PAGE),
-  text(".table th (70%)", mix("--color-text", 70, PAGE), PAGE),
+  text(".quote-attribution (64%)", mix("--color-text", 64, PAGE), PAGE),
+  text(".table-note / .pub-meta (64%)", mix("--color-text", 64, PAGE), PAGE),
+  text(".upcoming-where (64%)", mix("--color-text", 64, PAGE), PAGE),
+  text(".contact-note (64%)", mix("--color-text", 64, PAGE), PAGE),
+  text(".resume-links (70%)", mix("--color-text", 70, PAGE), PAGE),
+  text(".field label (70%)", mix("--color-text", 70, PAGE), PAGE),
+  text(".site-footer (55%)", mix("--color-text", 55, PAGE), PAGE),
+  text(".table th (60%)", mix("--color-text", 60, PAGE), PAGE),
   text(".table td", "--color-text", PAGE),
-  text(".cell-event (70%)", mix("--color-text", 70, PAGE), PAGE),
+  text(".cell-event (64%)", mix("--color-text", 64, PAGE), PAGE),
 
   /* --- accent used as text --- */
   text(".kicker (accent)", "--color-accent", PAGE),
@@ -114,7 +114,7 @@ const checks = [
   text(".stat-value", "--color-text", BAND, AA_LARGE),
   text(".stat-label (64%)", mix("--color-text", 64, BAND), BAND),
   text(".topic-list (82%)", mix("--color-text", 82, BAND), BAND),
-  text(".topic-note (70%)", mix("--color-text", 70, BAND), BAND),
+  text(".topic-note (64%)", mix("--color-text", 64, BAND), BAND),
 
   /* --- cards --- */
   text(".card-title", "--color-text", SURFACE),
@@ -131,6 +131,10 @@ const checks = [
 
   /* --- skip link --- */
   text(".skip-link", "--color-text", "--color-section"),
+  text(".text-muted (55%)", mix("--color-text", 55, PAGE), PAGE),
+  text(".resume-toolbar label (60%)", mix("--color-text", 60, PAGE), PAGE),
+  text(".form-notice / .contact-status", "--color-text",
+       mix("--color-accent", 10, SURFACE)),
 
   /* --- résumé documents, on white --- */
   text("résumé body #23242e", "#23242e", WHITE),

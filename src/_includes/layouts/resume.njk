@@ -23,17 +23,21 @@ layout: layouts/base.njk
     <header class="doc-header">
       <h1 class="doc-name">Jaunita Flessas, Esq.</h1>
       <p class="doc-role">{{ cv.role | safe }}</p>
+      {#- The address and phone numbers are not written into this markup. The
+          span is filled at runtime by /assets/js/contact.js from a base64
+          payload, so the site serves no file containing them as literal text —
+          the same treatment the contact form gets. Headless Chromium runs the
+          script, so the generated PDFs carry the details in full. -#}
       <p class="doc-contact">
-        {{ resumes.contact.location }}
-        {%- if resumes.contact.showDirectContact %}
-        · <a href="mailto:{{ resumes.contact.email }}">{{ resumes.contact.email }}</a>
-        {%- for phone in resumes.contact.phones %}
-        · <a href="tel:{{ phone | replace(" ", "") }}">{{ phone }}</a>
-        {%- endfor %}
-        {%- endif %}
+        {{ resumes.contact.location }}{% if resumes.contact.showDirectContact %}<span id="direct-contact"></span>{% endif %}
         · <a href="{{ resumes.contact.site.href }}">{{ resumes.contact.site.label }}</a>
         · <a href="{{ resumes.contact.linkedin.href }}">{{ resumes.contact.linkedin.label }}</a>
       </p>
+      {%- if resumes.contact.showDirectContact %}
+      <noscript>
+        <p class="doc-contact">Email and phone are shown with JavaScript enabled, which keeps them away from address harvesters. They are printed in full on the PDF above, or reach me through the <a href="/#contact">contact form</a>.</p>
+      </noscript>
+      {%- endif %}
     </header>
 
     <p class="doc-summary">{{ cv.summary | safe }}</p>

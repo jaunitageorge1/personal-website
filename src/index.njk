@@ -6,6 +6,7 @@ permalink: /
 navCta:
   label: View services
   url: /services/
+extraScripts: ["/assets/js/contact.js"]
 ---
 <div class="wrap">
   <section class="hero" aria-labelledby="hero-h">
@@ -151,19 +152,33 @@ navCta:
   <section id="contact" class="section-contact" aria-labelledby="contact-h">
     <h2 id="contact-h" class="section-title-sm">Let’s find the work that matters</h2>
     <p class="prose">Contract, fractional or project-based — if it advances access, rights, education or opportunity, I’m interested. Based in Melbourne, working with the US, EU, Canada and Australia.</p>
-    {#- The POST is handled server-side by the host, so the page needs no
-        JavaScript and the form still works with scripting switched off.
-        Configure the backend in src/_data/site.js. -#}
+    {#- How this sends is set in src/_data/site.js.
+
+        "mailto" (the design's own behaviour) opens the reader's own email app
+        with everything pre-filled. That needs JavaScript, so the Send button
+        is created by the script rather than sitting dead in the HTML, and the
+        <noscript> block below says so before anyone fills the form in.
+
+        No branch ever renders the email address into the markup. -#}
     {%- if site.form.provider != "none" %}
-    <form class="contact-form" name="contact" method="POST"
-          action="{% if site.form.provider == "formspree" %}{{ site.form.endpoint }}{% else %}{{ site.form.successUrl }}{% endif %}"
-          {%- if site.form.provider == "netlify" %} data-netlify="true" netlify-honeypot="company"{% endif %}
+    {%- set isMailto = site.form.provider == "mailto" %}
+    <form class="contact-form" id="contact-form" name="contact"
+          {%- if isMailto %} method="post" data-send="mailto"
+          {%- elif site.form.provider == "formspree" %} method="POST" action="{{ site.form.endpoint }}"
+          {%- else %} method="POST" action="{{ site.form.successUrl }}"{% endif %}
           aria-labelledby="contact-h">
       {%- if site.form.provider == "netlify" %}
       <input type="hidden" name="form-name" value="contact">
       {%- elif site.form.provider == "formspree" %}
       <input type="hidden" name="_next" value="{{ site.url }}{{ site.form.successUrl }}">
       <input type="hidden" name="_subject" value="[jaunitaflessas.com] New message">
+      {%- endif %}
+      {%- if isMailto %}
+      {#- Said before the fields, not after, so nobody fills in a form that
+          cannot send. -#}
+      <noscript>
+        <p class="form-notice">This form hands your message to your own email app, which needs JavaScript — and it’s switched off in your browser, so the fields below won’t send. <a href="{{ site.links.linkedin }}">Message me on LinkedIn</a> instead, and I’ll pick it up there.</p>
+      </noscript>
       {%- endif %}
       <div class="field">
         <label for="cf-name">Your name</label>
@@ -191,14 +206,22 @@ navCta:
         <label for="cf-company">Leave this field empty</label>
         <input id="cf-company" name="company" type="text" tabindex="-1" autocomplete="off">
       </div>
-      <div class="btn-row">
-        <button type="submit" class="btn btn-primary">Send message</button>
+      {#- The Send button is inserted here by contact.js. LinkedIn is a plain
+          link and is always available, script or no script. -#}
+      <div class="btn-row contact-actions">
         <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
       </div>
-      <p class="contact-note">Required fields are marked by your browser and must be filled in before the form will send. I read everything myself.</p>
+      {#- Empty at load, and present at load: a live region has to already be in
+          the page for what gets put into it to be announced. -#}
+      <p class="contact-status" id="contact-status" role="status"></p>
+      {#- For the mailto form this starts hidden and is revealed by the script,
+          because it describes what pressing Send does — and without scripting
+          there is no Send. The <noscript> block above covers that case. -#}
+      <p class="contact-note" id="contact-note"{% if isMailto %} hidden{% endif %}>
+        {%- if isMailto %}Sending opens your own email app with everything pre-filled — nothing is submitted to this site.
+        {%- else %}Everything here reaches me directly. I read it all myself.{% endif %}
+      </p>
     </form>
-    {%- else %}
-    <p class="btn-row"><a href="{{ site.links.linkedin }}" class="btn btn-primary">Message me on LinkedIn<span class="visually-hidden"> (external site)</span></a></p>
     {%- endif %}
   </section>
 

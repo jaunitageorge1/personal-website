@@ -10,12 +10,19 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# The audits serve these same headers locally (scripts/lib/serve.mjs reads this
+# block), so a policy that breaks the site fails `npm run check` rather than
+# only breaking in production.
 [[headers]]
   for = "/*"
   [headers.values]
-    # No inline script or style anywhere, so the policy can be strict.
+    # No inline script or style anywhere, so the policy can be strict: the one
+    # script is a same-origin file and every stylesheet is served from here.
     # cdn.picflow.com serves the photograph on the home page; drop it from
     # img-src once that file is self-hosted.
+    # form-action is kept even though the default contact form posts nowhere —
+    # it opens the reader's mail app — so a switch to a hosted form backend is
+    # a deliberate policy edit rather than a silent widening.
     Content-Security-Policy = "default-src 'self'; img-src 'self' https://cdn.picflow.com data:; style-src 'self'; script-src 'self'; font-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"

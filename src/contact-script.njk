@@ -1,0 +1,111 @@
+---
+permalink: /assets/js/contact.js
+eleventyExcludeFromCollections: true
+---
+/**
+ * Contact details, assembled at runtime.
+ *
+ * Generated at build time from src/_data/site.js and src/_data/resumes.js. The
+ * address and phone numbers are base64-encoded, so no file this site serves
+ * contains them as literal text. Address-harvesting crawlers read markup and
+ * do not run scripts; a browser, and the headless Chromium that renders the
+ * résumé PDFs, both do.
+ *
+ * Be clear-eyed about what that buys: it stops harvesters, not people. Anyone
+ * who opens the console can read the address. That is the accepted trade for a
+ * contact form with no backend.
+ *
+ * Two independent parts, each doing nothing unless its element is on the page:
+ *   1. the home page's contact form, which opens the reader's own email app;
+ *   2. the résumé documents' contact line.
+ */
+(function () {
+  "use strict";
+
+  var decode = function (s) { return atob(s); };
+
+  var EMAIL = {{ (site.form.mailto.user + "@" + site.form.mailto.domain) | base64 | dump | safe }};
+  var PHONES = {{ resumes.contact.phones | base64List | dump | safe }};
+
+  /** A " · " separator followed by a link. */
+  var appendLink = function (parent, href, text) {
+    parent.appendChild(document.createTextNode(" · "));
+    var a = document.createElement("a");
+    a.href = href;
+    a.textContent = text;
+    parent.appendChild(a);
+  };
+
+  /* ------------------------------------------------------------------ *
+   * 1. Résumé contact line
+   * ------------------------------------------------------------------ */
+  var slot = document.getElementById("direct-contact");
+  if (slot) {
+    var email = decode(EMAIL);
+    appendLink(slot, "mailto:" + email, email);
+    PHONES.forEach(function (encoded) {
+      var phone = decode(encoded);
+      appendLink(slot, "tel:" + phone.replace(/\s/g, ""), phone);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 2. Home page contact form
+   * ------------------------------------------------------------------ */
+  var form = document.getElementById("contact-form");
+  if (!form || form.getAttribute("data-send") !== "mailto") return;
+
+  var actions = form.querySelector(".contact-actions");
+  var status = document.getElementById("contact-status");
+  if (!actions || !status) return;
+
+  /* The Send button does not exist in the HTML at all — it is created here, so
+     nobody is ever shown a control that cannot work. Without scripting, the
+     <noscript> note and the LinkedIn link are the route in. */
+  var send = document.createElement("button");
+  send.type = "submit";
+  send.className = "btn btn-primary";
+  send.textContent = "Send message";
+  actions.insertBefore(send, actions.firstChild);
+
+  /* The note explains what Send does, so it appears with the button. */
+  var note = document.getElementById("contact-note");
+  if (note) note.hidden = false;
+
+  form.addEventListener("submit", function (event) {
+    /* The browser's own validation runs first: this handler is only reached
+       once every required field is filled and the email address parses. */
+    event.preventDefault();
+
+    var fields = form.elements;
+
+    /* Spam trap. A human never sees this field, so anything in it is a bot. */
+    if (fields.company && fields.company.value) return;
+
+    var name = fields.name.value.trim();
+    var subject = {{ site.form.subjectPrefix | dump | safe }} + " " + fields.topic.value + " — " + name;
+    var body = fields.message.value + "\n\n— " + name + " <" + fields.email.value.trim() + ">";
+
+    var url =
+      "mailto:" + decode(EMAIL) +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+
+    /* Say what just happened, and give a way through if it did not.
+       Handing off to a mail app is invisible — the page does not change — and
+       on a device with no mail app configured nothing happens at all. Without
+       this, a screen-reader user could not tell "sent" from "silently broken".
+       The fallback link carries the same message, so a second click still
+       works; its text is not the address, so the address only reaches the DOM
+       after someone has deliberately pressed Send. */
+    var direct = document.createElement("a");
+    direct.href = url;
+    direct.textContent = "open your email app directly";
+
+    status.textContent = "Opening your email app with the message pre-filled. If nothing happened, ";
+    status.appendChild(direct);
+    status.appendChild(document.createTextNode(" — or message me on LinkedIn."));
+
+    window.location.href = url;
+  });
+})();

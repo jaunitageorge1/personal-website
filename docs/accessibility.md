@@ -7,8 +7,8 @@ was deliberately overruled, and what a human still has to check.
 
 ## What is verified on every build
 
-`npm run check` builds the site and then runs two audits. Both exit non-zero on
-failure, so they can gate a deploy.
+`npm run check` builds the site and then runs four audits. All exit non-zero on
+failure, so they gate a deploy.
 
 ### `npm run check:a11y`
 
@@ -40,6 +40,45 @@ case for light text on a dark page. The home and inner pages are measured
 against the accent bloom (`#26233a`), the indigo bands against their glow
 (`#313676`).
 
+### `npm run check:qa`
+
+The machine-checkable criteria axe does not cover, driven in a real browser:
+
+| Check | Criterion |
+| --- | --- |
+| Every interactive element reachable by Tab, in DOM order, no trap | 2.1.1, 2.1.2, 2.4.3 |
+| A visible focus indicator on every focusable element | 2.4.7 |
+| The focused element is never covered by other content | 2.4.11 |
+| Targets at least 24×24 CSS px | 2.5.8 |
+| Text spacing can be overridden without content being clipped | 1.4.12 |
+| Pinch-zoom is not disabled | 1.4.4 |
+| Inputs collecting the user's own data carry `autocomplete` | 1.3.5 |
+| Page titles unique and descriptive | 2.4.2 |
+| No vague link text; no two links with the same text going elsewhere | 2.4.4 |
+| The same route to contact on every page | 3.2.6 |
+| The skip link is the first Tab stop, becomes visible, and has a target | 2.4.1 |
+| Internal links and asset references resolve; HTML is valid | 4.1.1 |
+
+Two of the 2.5.8 exceptions are implemented rather than assumed, because
+without them the check produces noise instead of findings. The **inline**
+exception is detected by looking for a non-whitespace text node beside the link
+in its parent — so a link in a sentence is exempt and a nav whose children are
+all links is not. The **spacing** exception is measured properly: a 24px
+circle centred on each undersized target must not intersect another target or
+another undersized target's circle.
+
+Three `html-validate` rules are switched off, each for a stated reason, in
+`scripts/qa-audit.mjs`. `no-redundant-role` and `prefer-native-element` would
+strip the `role="list"` this design needs (see below); `wcag/h32` wants a submit
+button in the static markup, which the contact form deliberately does not have
+(also below).
+
+### `npm run check:form`
+
+Twenty behavioural assertions on the contact form in a real browser — the one
+interactive thing on the site, and the one piece that depends on JavaScript.
+See "The contact form" below.
+
 ## Deliberate departures from the design system
 
 Two values in `_ds/styles.css` do not meet the standard the site claims. Both
@@ -62,6 +101,20 @@ bar, at **3.52:1**. Rules, table row strips and section dividers keep
 A third departure is structural: the Blog prototype places its `<footer>` inside
 `<main>`. The handoff's own requirement — footer outside main — was followed
 instead, on every page.
+
+Everything else was left exactly as the handoff specifies. Every muted value in
+the design was measured against the real gradient grounds before being accepted;
+`.card-meta` was the only one that fell short, so it was the only one changed.
+Several others were bumped during the first pass and then reverted, because
+"it passes" is not a reason to alter a design whose values are final.
+
+### `role="list"` on lists whose markers are removed
+
+`role="list"` on a `<ul>` or `<ol>` is redundant per spec, and `html-validate`
+says so. It is kept anyway: Safari with VoiceOver drops list semantics from any
+list styled `list-style: none`, and this design styles every list that way. The
+role is what keeps "list, 6 items" being announced. The rules that flag it are
+switched off in the QA audit with that reason recorded.
 
 ## Built in, not bolted on
 
@@ -117,15 +170,96 @@ switches pronunciation instead of reading them as English.
 **Forced colors.** A `forced-colors` block keeps the focus ring, card edges and
 button borders visible once Windows High Contrast replaces the palette.
 
-**No email in the markup.** The contact form is the only route in; no address is
-rendered anywhere on the site. The résumés are the deliberate exception — a
-résumé without contact details does not do its job — and that is a one-line
-switch (`showDirectContact` in `src/_data/resumes.js`).
+## The contact form
+
+The form does what the design handoff's prototype does: on submit it opens the
+reader's own email app with the message pre-filled, addressed to Jaunita, with
+the subject `[Site] <topic> — <name>` and the sender's name and address signed
+into the body. There is no backend and nothing is posted to the site.
+
+**The address is in no file the site serves.** It is base64-encoded at build
+time into `/assets/js/contact.js` and assembled at runtime. The same treatment
+is applied to the résumés' contact line, which is filled in by the same script
+rather than written into the markup — so the site serves no HTML, CSS, JS or XML
+containing the address or the phone numbers as literal text. `check:form`
+asserts this over every built file, so a future edit cannot quietly reintroduce
+it.
+
+Be clear-eyed about what that buys: it stops address-harvesting crawlers, which
+read markup and do not run scripts. It is not secrecy. Anyone who opens the
+console can read the address. That is the accepted trade for a form with no
+backend. The generated PDFs carry the details in full, because headless Chromium
+runs the script — and `resumes:pdf` fails loudly if it ever does not, rather
+than shipping a résumé nobody can reply to.
+
+**No dead controls.** The Send button does not exist in the static HTML. It is
+created by the script, so a reader without JavaScript is never shown a button
+that cannot work. In its place a `<noscript>` block sits *above* the fields —
+not below them — saying plainly that the form will not send and offering
+LinkedIn instead, before anyone invests effort filling it in. The note
+explaining what Send does is `hidden` until the script reveals it, since without
+a Send button it would be describing something that is not there.
+
+This is why `html-validate`'s `wcag/h32` rule is switched off. The rule wants a
+submit button in the markup; rendering a dead one would be worse than rendering
+none.
+
+**Handing off is invisible, so it is announced.** Setting `location.href` to a
+`mailto:` changes nothing on screen, and on a device with no mail app configured
+nothing happens at all. Without feedback a screen-reader user could not tell
+"sent" from "silently broken". A `role="status"` region — present but empty at
+load, because a live region must exist before content is put into it — is filled
+in on submit with what just happened and a real fallback link carrying the same
+message. Its text is not the address, so the address only reaches the DOM after
+someone has deliberately pressed Send.
+
+**Validation** is the browser's own: `required` on name, email and message, and
+`type="email"` on the address. The submit handler is only reached once the form
+is valid, so an incomplete submit is blocked by the user agent and focus moves
+to the first bad field. `autocomplete="name"` and `autocomplete="email"` let a
+browser fill the fields from the reader's own profile (1.3.5).
+
+**The honeypot** is a `company` field parked off-screen, `tabindex="-1"` and
+inside `aria-hidden="true"`, so no human and no screen reader ever meets it.
+Anything in it aborts the send silently, leaving no status trace.
+
+Switching `form.provider` in `src/_data/site.js` to `netlify` or `formspree`
+swaps in a real backend that works with scripting switched off; the script then
+does nothing. Neither option renders the address either.
+
+## Open item: the embedded talk video
+
+The Speaking page embeds the WebAIM 2025 "Win with Metrics" talk from YouTube.
+Embedding a video makes its captions this page's responsibility under SC 1.2.2
+(Captions, Prerecorded), and that cannot be checked from the build — it depends
+on the upload. The embed now carries `cc_load_policy=1`, which turns captions on
+by default *if the video has them*.
+
+**Someone needs to confirm the upload is captioned**, and that the captions are
+human-made or human-corrected — YouTube's auto-generated captions do not satisfy
+1.2.2. If it is not captioned, either caption it or replace the embed with a
+link to the talk, which carries no such obligation. This is the one WCAG 2.2 AA
+criterion the site cannot self-certify.
+
+SC 1.2.5 (Audio Description) is AA too, but a recorded conference talk whose
+visual content is slides already described in the speech generally satisfies it
+through 1.2.3's audio-description-or-transcript alternative. Worth a look while
+checking the captions.
+
+## Multiple ways to reach a page (2.4.5)
+
+Two, as the SC requires. The main navigation appears on all four content pages
+in the same order, and every page links back to the home page, which links to
+every other page on the site including all four résumés — techniques G125 and
+G185 in combination. The résumé documents deliberately carry only a back link
+rather than the full navigation, because the design treats them as standalone
+printable documents; they remain reachable from the home page's "Hire me"
+section and from the sitemap.
 
 ## What automation does not cover
 
-axe catches roughly a third to a half of what matters. Before shipping, a human
-still needs to:
+axe catches roughly a third to a half of what matters, and the QA audit adds the
+mechanically checkable rest. Before shipping, a human still needs to:
 
 - **Tab through every page.** Confirm the focus order matches the visual order,
   that the skip link works, that the talks table can be scrolled from the
@@ -140,5 +274,8 @@ still needs to:
   navigable.
 - **Test at 400% zoom in a real browser**, not just an emulated viewport.
 - **Re-check the photograph's alt text** if the image is ever swapped.
+- **Confirm the embedded talk is captioned** — see the open item above.
+- **Send yourself a message through the contact form** from a phone and from a
+  desktop, and confirm the mail app opens with the subject and body intact.
 
 Record the result of that pass here when it is done.

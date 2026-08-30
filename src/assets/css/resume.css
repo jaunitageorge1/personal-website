@@ -28,7 +28,7 @@
 .resume-toolbar .spacer { flex: 1; }
 .resume-toolbar .role-label {
   font-size: var(--fs-13);
-  color: color-mix(in srgb, var(--color-text) 62%, transparent);
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
 }
 
 /* — the document — */

@@ -30,5 +30,10 @@
 </head>
 <body>
 {{ content | safe }}
+{%- if extraScripts %}
+{%- for src in extraScripts %}
+<script src="{{ src }}" defer></script>
+{%- endfor %}
+{%- endif %}
 </body>
 </html>

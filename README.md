@@ -16,9 +16,10 @@ checked by hand, and where the design system was deliberately overruled.
 ## Stack
 
 [Eleventy](https://www.11ty.dev) with Nunjucks templates. Plain CSS, no build
-step for styles, no framework, and **no client-side JavaScript** other than one
-optional 14-line file that adds a Print button to the résumés. Output is static,
-semantic HTML.
+step for styles, no framework, and **two small scripts**: one opens the reader's
+email app from the contact form and fills in the résumés' contact line, the
+other adds a Print button beside the résumé PDF links. Everything else is
+static, semantic HTML that works with scripting switched off.
 
 ```
 src/
@@ -32,6 +33,7 @@ src/
   _includes/
     layouts/        base (head), page (site shell), resume (document shell)
     partials/       nav, footer
+  contact-script.njk  generates /assets/js/contact.js with the address encoded
   assets/
     css/            tokens.css (design tokens) · site.css · resume.css
     fonts/          Inter, self-hosted — SIL OFL 1.1, licence included
@@ -39,8 +41,10 @@ src/
     resumes/        generated tagged PDFs (committed)
   *.njk             the pages
 scripts/
-  check-contrast.mjs    measures 49 colour pairs against WCAG thresholds
+  check-contrast.mjs    measures 52 colour pairs against WCAG thresholds
   a11y-audit.mjs        axe-core + reflow, zoom, text-resize and landmark checks
+  qa-audit.mjs          keyboard, target size, text spacing, links, HTML validity
+  contact-form-test.mjs contact form behaviour, with and without JavaScript
   build-resume-pdfs.mjs pre-renders each résumé to a tagged PDF
 docs/accessibility.md
 ```
@@ -52,9 +56,11 @@ npm install
 
 npm run dev            # local server with live reload
 npm run build          # build to _site/
-npm run check          # build, then contrast audit + accessibility audit
+npm run check          # build, then all four audits below
+npm run check:contrast # 52 colour pairs measured against WCAG thresholds
 npm run check:a11y     # axe-core, reflow at 320px and 400% zoom, text at 200%
-npm run check:contrast # colour contrast across the whole palette
+npm run check:qa       # keyboard, target size, text spacing, links, HTML validity
+npm run check:form     # contact form behaviour, with and without JavaScript
 npm run resumes:pdf    # regenerate the four tagged PDFs (needs Chromium)
 ```
 
@@ -78,17 +84,30 @@ real photograph; without one the card shows a decorative panel and no image is
 announced to screen readers. Write real alt text — the panel is deliberately not
 a fallback for a missing description.
 
-**Contact form.** No email address is rendered anywhere in the site's HTML. The
-backend is set in `site.js` → `form.provider`:
+**Contact form.** On submit it opens the sender's own email app with the message
+pre-filled — subject `[Site] <topic> — <name>`, their name and address signed
+into the body. No backend, nothing posted to the site.
 
-- `"netlify"` (default) — Netlify Forms handles the POST and the honeypot check
-  server-side. Nothing to configure.
+Your address is in **no file the site serves**: it is base64-encoded at build
+time into `/assets/js/contact.js` and assembled at runtime, and the résumés'
+contact line is filled in by the same script. `npm run check:form` asserts that
+over every built file, so a later edit cannot quietly put it back. That stops
+address-harvesting crawlers, which read markup and do not run scripts — it is
+not secrecy, and anyone who opens the console can read it.
+
+Change your address, or the subject prefix, in `site.js` → `form.mailto`.
+
+Other backends, via `site.js` → `form.provider`:
+
+- `"mailto"` (default) — the above.
+- `"netlify"` — Netlify Forms handles the POST and the honeypot server-side.
 - `"formspree"` — set `form.endpoint` to your form URL.
-- `"none"` — the form is not rendered; the contact section falls back to
-  LinkedIn.
+- `"none"` — no form; the contact section falls back to LinkedIn.
 
-All three work with JavaScript switched off. **If you deploy somewhere other
-than Netlify, change this** — otherwise the form will POST into nothing.
+The last three work with JavaScript switched off; `mailto` cannot, since opening
+a mail app requires it. In that case the Send button is not rendered at all and
+a note above the fields says so, rather than offering a button that does
+nothing.
 
 ## Deploying
 
@@ -119,10 +138,13 @@ These are flagged in the design handoff and are the owner's calls, not bugs:
   environment. To localise it: download the file to `src/assets/images/`, point
   `home.js` → `photograph.src` at it, and drop `cdn.picflow.com` from `img-src`
   in `netlify.toml`.
-- **Résumé contact details.** The site exposes no email address; the résumés do,
-  because a résumé without contact details does not do its job. Set
-  `showDirectContact: false` in `src/_data/resumes.js` to drop the address and
-  phone numbers from the public HTML résumés and their PDFs.
+- **The embedded talk video** on the Speaking page needs its captions confirmed.
+  Embedding it makes them this site's responsibility under WCAG 1.2.2, and that
+  cannot be checked from the build. This is the one criterion the site cannot
+  self-certify — see `docs/accessibility.md`.
+- **Résumé contact details** are shown on the HTML résumés and printed in full
+  on the PDFs, assembled at runtime like the form's. Set
+  `showDirectContact: false` in `src/_data/resumes.js` to drop them entirely.
 - **Blog subscriptions** currently route to the contact form, as specified,
   until a newsletter service is chosen.
 

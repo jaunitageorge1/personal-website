@@ -14,17 +14,17 @@
  * Automated checks catch perhaps half of what matters; a keyboard and
  * screen-reader pass is still required before shipping. See docs/accessibility.md.
  */
+import { glob } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 import { launchChromium } from "./lib/browser.mjs";
 import { serve } from "./lib/serve.mjs";
 
-const PAGES = [
-  "/", "/services/", "/speaking/", "/blog/", "/thanks/",
-  "/resume/accessibility-leadership/",
-  "/resume/instructional-design/",
-  "/resume/program-management/",
-  "/resume/policy-and-governance/",
-];
+/* Discovered from the build rather than listed by hand, so a page can never be
+   added and quietly skipped by the audit. */
+const PAGES = (await Array.fromAsync(glob("_site/**/index.html")))
+  .map((f) => f.replace(/^_site/, "").replace(/index\.html$/, ""))
+  .sort();
+
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
 
