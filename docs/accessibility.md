@@ -159,7 +159,14 @@ carries intrinsic `width`/`height`, so nothing shifts as the page settles.
 
 **Keyboard.** A skip link on every page, focus never removed (only restyled),
 and a visible `:focus-visible` ring at 2px with 2px offset that clears 3:1 on
-every ground it appears over. The résumé's Print button is added by script only
+every ground it appears over. The embedded video is the exception that needed
+handling: an `<iframe>` sits in the tab order but no browser paints a ring on
+one, so tabbing to it appeared to do nothing. The ring is drawn on the wrapper
+via `:focus-within`, because the wrapper clips its overflow and would cut an
+outline on the iframe itself. CI caught this; the audit now focuses every
+iframe directly and checks for an indicator, rather than relying on Tab
+reaching it — whether it does depends on the embedded document loading, which
+the audit blocks. The résumé's Print button is added by script only
 after scripting is confirmed available, so no reader is offered a dead control;
 the PDF download beside it is a plain link and always works.
 

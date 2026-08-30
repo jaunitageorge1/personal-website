@@ -117,11 +117,23 @@ for (const path of pages) {
         index: el.dataset.qaIndex ?? null,
         tag: el.tagName.toLowerCase(),
         label: (el.textContent || el.getAttribute("aria-label") || el.id || "").trim().slice(0, 40),
-        /* A focus indicator has to be *something*: an outline, a ring, or a
-           border change. Absence of all three is a 2.4.7 failure. */
-        indicator:
-          (parseFloat(s.outlineWidth) > 0 && s.outlineStyle !== "none") ||
-          s.boxShadow !== "none",
+        /* A focus indicator has to be *something*: an outline or a ring.
+           It may be drawn on an ancestor rather than the focused element —
+           necessarily so when the element sits inside an overflow:hidden
+           wrapper, which would clip an outline on the element itself. Only
+           ancestors matching :focus-within count, so a permanent shadow
+           somewhere up the tree cannot be mistaken for a focus ring. */
+        indicator: (() => {
+          const ring = (cs) =>
+            (parseFloat(cs.outlineWidth) > 0 && cs.outlineStyle !== "none") ||
+            cs.boxShadow !== "none";
+          if (ring(s)) return true;
+          for (let p = el.parentElement; p; p = p.parentElement) {
+            if (!p.matches(":focus-within")) break;
+            if (ring(getComputedStyle(p))) return true;
+          }
+          return false;
+        })(),
         obscured: (() => {
           /* 2.4.11: the focused element must not be hidden behind other
              content. Sample its centre and see what is actually on top. */
@@ -165,6 +177,33 @@ for (const path of pages) {
     const targetExists = await page.evaluate((sel) => !!document.querySelector(sel), skip.target);
     if (!targetExists) note(path, "2.4.1", `skip link points at missing ${skip.target}`);
   }
+
+  /* --- 2.4.7 for iframes ---
+     An <iframe> is in the tab order, but no browser paints a focus ring on
+     one: a keyboard user tabbing to an embedded video sees nothing happen
+     unless the page draws the ring itself. Whether Tab *reaches* it depends on
+     the embedded document loading, which this audit blocks for determinism, so
+     it is focused directly rather than tabbed to. */
+  const framesWithoutIndicator = await page.evaluate(() => {
+    const out = [];
+    for (const frame of document.querySelectorAll("iframe")) {
+      if (frame.closest("[aria-hidden='true']") || frame.getAttribute("tabindex") === "-1") continue;
+      frame.focus();
+      const ring = (cs) =>
+        (parseFloat(cs.outlineWidth) > 0 && cs.outlineStyle !== "none") || cs.boxShadow !== "none";
+      let visible = ring(getComputedStyle(frame));
+      for (let p = frame.parentElement; p && !visible; p = p.parentElement) {
+        if (!p.matches(":focus-within")) break;
+        visible = ring(getComputedStyle(p));
+      }
+      frame.blur();
+      if (!visible) out.push(frame.getAttribute("title") || frame.src || "untitled iframe");
+    }
+    return out;
+  });
+  framesWithoutIndicator.forEach((f) =>
+    note(path, "2.4.7", `iframe takes focus with no visible indicator: ${f}`)
+  );
 
   /* --- 2.5.8 target size, with both of the exceptions the SC allows --- */
   const small = await page.evaluate(() => {
