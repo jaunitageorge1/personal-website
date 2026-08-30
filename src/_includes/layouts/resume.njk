@@ -1,0 +1,71 @@
+---
+layout: layouts/base.njk
+---
+{#- A standalone, printable document. No site chrome beyond a back link:
+    everything below the toolbar is the résumé itself, and the toolbar is
+    dropped from print and PDF output by `.no-print`. -#}
+<a class="skip-link" href="#main">Skip to the résumé</a>
+{#- A <header> rather than a <div>: it is the page's banner, so the role label
+    and the download control sit inside a landmark like everything else. -#}
+<header class="resume-toolbar no-print">
+  <nav aria-label="Site">
+    <a class="back-link" href="/"><span aria-hidden="true">←</span> Back to jaunitaflessas.com</a>
+  </nav>
+  <span class="spacer"></span>
+  <span class="role-label">Résumé — {{ cv.label }}</span>
+  <a class="btn btn-primary" href="/assets/resumes/jaunita-flessas-{{ cv.slug }}.pdf">
+    Download PDF<span class="visually-hidden"> — {{ cv.label }} résumé, tagged for screen readers</span>
+  </a>
+</header>
+
+<main id="main">
+  <article class="doc">
+    <header class="doc-header">
+      <h1 class="doc-name">Jaunita Flessas, Esq.</h1>
+      <p class="doc-role">{{ cv.role | safe }}</p>
+      <p class="doc-contact">
+        {{ resumes.contact.location }}
+        {%- if resumes.contact.showDirectContact %}
+        · <a href="mailto:{{ resumes.contact.email }}">{{ resumes.contact.email }}</a>
+        {%- for phone in resumes.contact.phones %}
+        · <a href="tel:{{ phone | replace(" ", "") }}">{{ phone }}</a>
+        {%- endfor %}
+        {%- endif %}
+        · <a href="{{ resumes.contact.site.href }}">{{ resumes.contact.site.label }}</a>
+        · <a href="{{ resumes.contact.linkedin.href }}">{{ resumes.contact.linkedin.label }}</a>
+      </p>
+    </header>
+
+    <p class="doc-summary">{{ cv.summary | safe }}</p>
+
+    <div class="doc-body">
+      <h2>Experience</h2>
+      {%- for job in cv.jobs %}
+      <div class="doc-job">
+        <h3>{{ job.heading | safe }}</h3>
+        <ul>
+          {%- for bullet in job.bullets %}
+          <li>{{ bullet | safe }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
+      {%- endfor %}
+
+      {%- for section in cv.sections %}
+      <h2>{{ section.heading }}</h2>
+      <ul class="doc-cols">
+        {%- for item in section.items %}
+        <li>{{ item | safe }}</li>
+        {%- endfor %}
+      </ul>
+      {%- endfor %}
+    </div>
+  </article>
+</main>
+
+{#- Progressive enhancement: the print control is added by this script only
+    once scripting has confirmed it will work, so no reader is offered a dead
+    button. The PDF link above needs no scripting and is always present.
+    Kept in a file rather than inline so the site can ship a strict
+    Content-Security-Policy with no 'unsafe-inline'. -#}
+<script src="/assets/js/resume-print.js" defer></script>

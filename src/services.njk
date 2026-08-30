@@ -1,0 +1,75 @@
+---
+layout: layouts/page.njk
+title: Services
+pageDescription: "Accessibility consulting and audits, training, instructional design, copywriting, AI web development and photography — contract and project-based, worldwide."
+permalink: /services/
+footerSpaced: true
+navCta:
+  label: Get in touch
+  url: /#contact
+---
+<div class="wrap">
+  <section class="page-hero" aria-labelledby="services-h">
+    <h1 class="page-title" id="services-h">Services</h1>
+    <p class="lede">{{ services.intro }}</p>
+  </section>
+
+  {%- for practice in services.practices %}
+  <section class="svc-detail" aria-labelledby="svc-{{ practice.num }}">
+    <p class="svc-num">{{ practice.num }}</p>
+    <div class="svc-detail-body">
+      <h2 class="svc-detail-title" id="svc-{{ practice.num }}">{{ practice.title }}</h2>
+      <p class="prose prose-wide">{{ practice.copy }}</p>
+      <ul class="tag-list hero-tags" role="list" aria-label="{{ practice.title }} — deliverables">
+        {%- for item in practice.items %}
+        <li class="tag tag-outline">{{ item }}</li>
+        {%- endfor %}
+      </ul>
+      {%- if practice.links.length %}
+      <ul class="link-list" role="list" aria-label="{{ practice.title }} — related links">
+        {%- for link in practice.links %}
+        <li><a href="{{ link.href }}">{{ link.label }}<span class="visually-hidden"> (external site)</span></a></li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+    </div>
+  </section>
+  {%- endfor %}
+</div>
+
+<section class="band" aria-labelledby="training-h">
+  <div class="wrap">
+    <p class="kicker">Training catalogue</p>
+    <h2 id="training-h" class="section-title">Topics I teach</h2>
+    <div class="topic-cols">
+      <div>
+        <h3>Accessibility</h3>
+        <ul class="topic-list">
+          {%- for topic in services.training.accessibility %}
+          <li>{{ topic }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <div>
+        <h3>AI</h3>
+        <ul class="topic-list">
+          {%- for topic in services.training.ai %}
+          <li>{{ topic }}</li>
+          {%- endfor %}
+        </ul>
+        <p class="topic-note">{{ services.training.note }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="section-close-wide" aria-labelledby="project-h">
+    <h2 id="project-h" class="section-title-sm">Have a project in mind?</h2>
+    <p class="prose">Tell me what you’re building and who it’s for. I’ll tell you honestly whether I’m the right fit.</p>
+    <div class="btn-row">
+      <a href="/#contact" class="btn btn-primary">Contact me</a>
+      <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
+    </div>
+  </section>
+</div>

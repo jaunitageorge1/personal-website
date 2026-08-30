@@ -1,0 +1,209 @@
+---
+layout: layouts/page.njk
+title: Home
+pageTitle: Jaunita Flessas — Accessibility leader, trainer & maker
+permalink: /
+navCta:
+  label: View services
+  url: /services/
+---
+<div class="wrap">
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="hero-body">
+      {%- if home.available %}
+      <p class="hero-availability"><span class="tag tag-accent">Available for contract work</span></p>
+      {%- endif %}
+      <h1 class="hero-title" id="hero-h"><span>Access is not a feature.</span> <span>It’s the point.</span></h1>
+      <p class="hero-intro">I’m Jaunita Flessas — an internationally recognised digital accessibility leader, attorney, trainer and maker based in Melbourne. I take on contract work in accessibility, training, instructional design, writing, AI web development and photography — and I bring all of it to the causes I care about: disability rights, human rights, anti-poverty and education.</p>
+      <p class="hero-note">Founder of <a href="{{ site.links.empower }}">Empower Accessibility</a> — enterprise accessibility consulting lives there. This site is everything I do as me.</p>
+      <ul class="tag-list hero-tags" role="list" aria-label="Credentials">
+        {%- for credential in home.credentials %}
+        <li class="tag tag-neutral">{{ credential }}</li>
+        {%- endfor %}
+      </ul>
+      <div class="btn-row">
+        <a href="/services/" class="btn btn-primary">View services</a>
+        <a href="/speaking/" class="btn btn-ghost">See my talks</a>
+      </div>
+    </div>
+    <div class="hero-portrait lighten">
+      <img src="{{ home.portrait.src }}" alt="{{ home.portrait.alt }}"
+           width="{{ home.portrait.width }}" height="{{ home.portrait.height }}"
+           fetchpriority="high" decoding="async">
+    </div>
+  </section>
+</div>
+
+<section class="band" aria-labelledby="track-h">
+  <div class="wrap">
+    <h2 id="track-h" class="visually-hidden">Track record</h2>
+    {#- A description list: each number is the term, what it counts is the
+        description. Read in order, a pair says "17,000 — employees reached". -#}
+    <dl class="stats">
+      {%- for stat in home.stats %}
+      <div>
+        <dt class="stat-value">{{ stat.value }}</dt>
+        <dd class="stat-label">{{ stat.label }}</dd>
+      </div>
+      {%- endfor %}
+    </dl>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="section-values" aria-labelledby="values-h">
+    <p class="kicker">What I stand for</p>
+    <h2 id="values-h" class="section-title">Values-driven, by design</h2>
+    <p class="prose">I look for work that moves the needle on the things that matter. If your project sits in one of these spaces, I want to hear about it — and my rates reflect that.</p>
+    <ul class="grid grid-cards" role="list">
+      {%- for value in home.values %}
+      <li class="card">
+        <h3 class="card-kicker">{{ value.title }}</h3>
+        <p class="card-body">{{ value.body }}</p>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <section class="section" aria-labelledby="services-h">
+    <p class="kicker">What I do</p>
+    <h2 id="services-h" class="visually-hidden">Services</h2>
+    <ol class="svc-list" role="list">
+      {%- for service in home.services %}
+      <li class="svc-row">
+        <p class="svc-num">{{ service.num }}</p>
+        <h3 class="svc-title">{{ service.title }}</h3>
+        <p class="svc-copy">{{ service.copy }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="btn-row"><a href="/services/" class="btn btn-secondary">All services in detail</a></p>
+  </section>
+
+  <section class="section" aria-labelledby="projects-h">
+    <p class="kicker">Featured projects</p>
+    <h2 id="projects-h" class="section-title">Things I’ve built and lead</h2>
+    <ul class="grid grid-projects" role="list">
+      {%- for project in home.projects %}
+      <li class="card">
+        <p class="card-kicker">{{ project.role }}</p>
+        <h3 class="card-title post-title">{{ project.name }}</h3>
+        <p class="card-body">{{ project.copy }}</p>
+        {%- if project.href %}
+        <p class="card-link"><a href="{{ project.href }}">{{ project.linkLabel }}<span class="visually-hidden"> (external site)</span></a></p>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <section class="split split-photo" aria-labelledby="photo-h">
+    <div>
+      <p class="kicker">Photography</p>
+      <h2 id="photo-h" class="section-title">Behind the lens</h2>
+      <p class="prose prose-narrow">Events, portraits and the places my hiking boots take me. Client galleries are delivered through Picflow — proofing, selects and downloads in one accessible place.</p>
+      <p class="btn-row"><a href="{{ site.links.picflow }}" class="btn btn-ghost">Browse the full gallery on Picflow<span class="visually-hidden"> (external site)</span></a></p>
+    </div>
+    <figure class="lighten">
+      <img src="{{ home.photograph.src }}" alt="{{ home.photograph.alt }}"
+           width="{{ home.photograph.width }}" height="{{ home.photograph.height }}"
+           loading="lazy" decoding="async">
+    </figure>
+  </section>
+
+  <section class="quote-section" aria-labelledby="quote-h">
+    <h2 id="quote-h" class="visually-hidden">What people say</h2>
+    <figure>
+      <blockquote class="quote">“{{ home.quote.text }}”</blockquote>
+      <figcaption class="quote-attribution">— {{ home.quote.attribution }}</figcaption>
+    </figure>
+  </section>
+
+  <hr class="hr">
+
+  <section id="hire" class="section-hire" aria-labelledby="hire-h">
+    <p class="kicker">Hire me</p>
+    <h2 id="hire-h" class="section-title">Two ways to work with me</h2>
+    <div class="grid grid-wide">
+      <div class="card">
+        <h3 class="card-kicker">Contract &amp; fractional</h3>
+        <p class="card-body">Project-based or ongoing: audits, training, courseware, writing, accessible builds and photography — scoped to your timeline. Fractional accessibility leadership if you need a program stood up without a full-time hire.</p>
+        <p class="btn-row"><a href="/services/" class="btn btn-secondary">See services</a></p>
+      </div>
+      <div class="card">
+        <h3 class="card-kicker">Full-time</h3>
+        <p class="card-body">I’m also open to the right permanent role — remote, or hybrid in Melbourne. US citizen with full Australian working rights. Roles I’m qualified for:</p>
+        <ul class="tag-list hero-tags" role="list" aria-label="Roles I’m qualified for">
+          {%- for role in home.roles %}
+          <li class="tag tag-outline">{{ role }}</li>
+          {%- endfor %}
+        </ul>
+        <p class="btn-row"><a href="#contact" class="btn btn-secondary">Send me a role</a></p>
+        <p class="resume-links">Role-specific résumés (accessible HTML · tagged-PDF ready):
+          {%- for cv in resumes.items %}
+          <a href="/resume/{{ cv.slug }}/">{{ cv.label }}</a>{% if not loop.last %} · {% endif %}
+          {%- endfor %}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section-contact" aria-labelledby="contact-h">
+    <h2 id="contact-h" class="section-title-sm">Let’s find the work that matters</h2>
+    <p class="prose">Contract, fractional or project-based — if it advances access, rights, education or opportunity, I’m interested. Based in Melbourne, working with the US, EU, Canada and Australia.</p>
+    {#- The POST is handled server-side by the host, so the page needs no
+        JavaScript and the form still works with scripting switched off.
+        Configure the backend in src/_data/site.js. -#}
+    {%- if site.form.provider != "none" %}
+    <form class="contact-form" name="contact" method="POST"
+          action="{% if site.form.provider == "formspree" %}{{ site.form.endpoint }}{% else %}{{ site.form.successUrl }}{% endif %}"
+          {%- if site.form.provider == "netlify" %} data-netlify="true" netlify-honeypot="company"{% endif %}
+          aria-labelledby="contact-h">
+      {%- if site.form.provider == "netlify" %}
+      <input type="hidden" name="form-name" value="contact">
+      {%- elif site.form.provider == "formspree" %}
+      <input type="hidden" name="_next" value="{{ site.url }}{{ site.form.successUrl }}">
+      <input type="hidden" name="_subject" value="[jaunitaflessas.com] New message">
+      {%- endif %}
+      <div class="field">
+        <label for="cf-name">Your name</label>
+        <input id="cf-name" name="name" class="input" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="cf-email">Your email</label>
+        <input id="cf-email" name="email" class="input" type="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="cf-topic">What’s this about?</label>
+        <select id="cf-topic" name="topic" class="input" required>
+          {%- for topic in home.contactTopics %}
+          <option value="{{ topic }}">{{ topic }}</option>
+          {%- endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="cf-msg">Message</label>
+        <textarea id="cf-msg" name="message" class="input" rows="5" required></textarea>
+      </div>
+      {#- Spam trap. Off-screen, unfocusable and hidden from assistive tech, so
+          only a bot filling every field will trip it. -#}
+      <div class="honeypot" aria-hidden="true">
+        <label for="cf-company">Leave this field empty</label>
+        <input id="cf-company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary">Send message</button>
+        <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
+      </div>
+      <p class="contact-note">Required fields are marked by your browser and must be filled in before the form will send. I read everything myself.</p>
+    </form>
+    {%- else %}
+    <p class="btn-row"><a href="{{ site.links.linkedin }}" class="btn btn-primary">Message me on LinkedIn<span class="visually-hidden"> (external site)</span></a></p>
+    {%- endif %}
+  </section>
+
+  <section class="section-a11y" aria-labelledby="a11y-h">
+    <h2 id="a11y-h" class="card-title">Accessibility statement</h2>
+    <p class="prose prose-wide">This site is built to WCAG 2.2 AA: semantic structure, full keyboard operability, visible focus, alt text on images and no motion that can’t be paused. If you hit a barrier anywhere, <a href="#contact">tell me through the contact form</a> — I’ll fix it and credit you.</p>
+  </section>
+</div>

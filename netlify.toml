@@ -1,0 +1,36 @@
+# Netlify deploy configuration.
+#
+# The build needs nothing but Node and Eleventy: the résumé PDFs are generated
+# ahead of time and committed, so no browser is downloaded here.
+
+[build]
+  command = "npm run build"
+  publish = "_site"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # No inline script or style anywhere, so the policy can be strict.
+    # cdn.picflow.com serves the photograph on the home page; drop it from
+    # img-src once that file is self-hosted.
+    Content-Security-Policy = "default-src 'self'; img-src 'self' https://cdn.picflow.com data:; style-src 'self'; script-src 'self'; font-src 'self'; frame-src https://www.youtube-nocookie.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # The site has no scripted motion, camera, mic or location use.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+# Fingerprint-free filenames, so assets are revalidated rather than cached
+# forever — except the fonts, which are content-stable.
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/resumes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

@@ -1,0 +1,10 @@
+{#- Main navigation. The current page is marked with aria-current="page" and
+    is distinguished on screen by colour *and* an underline, never colour
+    alone. Links wrap onto further rows on narrow viewports. -#}
+<nav class="nav" aria-label="Main">
+  <span class="nav-brand">{{ site.name }}</span>
+  {%- for item in site.nav %}
+  <a href="{{ item.url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.label }}</a>
+  {%- endfor %}
+  <a href="{{ navCta.url }}" class="btn btn-primary">{{ navCta.label }}</a>
+</nav>
