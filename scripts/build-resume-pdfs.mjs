@@ -7,23 +7,29 @@
  * Chromium emits tags when `tagged: true` is passed, and `outline: true` adds
  * the bookmark tree built from the headings.
  *
- * Output lands in src/assets/resumes/ and is committed, so deploying the site
- * needs no browser. Re-run this after editing src/_data/resumes.js.
+ * These are build output, not source. They used to be committed, which meant
+ * they could silently fall out of step with the résumé pages — and they cannot
+ * be diffed to detect that, because a browser-generated PDF is not reproducible
+ * across machines: a different Chromium build or a different set of installed
+ * fonts changes the bytes and the file size. `npm run build` runs this, so the
+ * PDFs are always generated from the pages they accompany and staleness is not
+ * a state the project can be in.
  *
- *   npm run build && npm run resumes:pdf
+ * Timestamps are still normalised, so repeated builds in one environment are
+ * byte-identical and a redeploy does not churn every PDF.
  */
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { launchChromium } from "./lib/browser.mjs";
 import { serve } from "./lib/serve.mjs";
 import resumes from "../src/_data/resumes.js";
 
-const OUT = "src/assets/resumes";
+const OUT = "_site/assets/resumes";
 
 /**
  * Chromium stamps /CreationDate and /ModDate with the moment of the run, which
- * is the only thing that differs between two builds of the same résumé — eight
- * bytes out of ~190KB. Left alone, every regeneration shows up as a change to a
- * committed binary and CI could never tell a real edit from a re-run.
+ * is the only thing that differs between two builds on the same machine.
+ * Normalising them keeps repeated builds byte-identical, so a redeploy does not
+ * churn every PDF for no reason.
  *
  * Both fields are fixed-width, so overwriting them in place keeps every xref
  * offset valid. SOURCE_DATE_EPOCH is honoured if set (the reproducible-builds

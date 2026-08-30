@@ -33,15 +33,3 @@ jobs:
       # the contact form's behaviour with and without JavaScript.
       - name: Build and audit
         run: npm run check
-
-      # The committed PDFs are generated from the résumé pages; if an edit to
-      # the résumé data lands without re-running the generator, they drift.
-      - name: Check the résumé PDFs are up to date
-        run: |
-          npm run resumes:pdf
-          if ! git diff --quiet -- src/assets/resumes; then
-            echo "::error::The committed résumé PDFs do not match the résumé pages."
-            echo "Run 'npm run build && npm run resumes:pdf' and commit the result."
-            git diff --stat -- src/assets/resumes
-            exit 1
-          fi

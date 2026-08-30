@@ -36,7 +36,8 @@ jobs:
 
       - run: npm ci
 
-      # The audits drive a real browser.
+      # The audits drive a real browser, and the build renders the résumé
+      # PDFs through it.
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 

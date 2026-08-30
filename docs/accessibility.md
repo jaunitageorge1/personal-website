@@ -143,6 +143,11 @@ region, which is keyboard focusable, named for screen readers, and shows a focus
 ring. That is the documented exception to 1.4.10; the page itself never scrolls
 sideways.
 
+The PDFs are generated from the résumé pages at build time rather than
+committed, so they cannot drift out of step with the HTML — and the generator
+fails the build if the contact details did not render, rather than shipping a
+résumé nobody can reply to.
+
 **Real text.** Nothing is baked into an image — the statistics, the résumés and
 the numbered service rows are all live text, selectable, searchable and
 translatable. The generated PDFs carry `/StructTreeRoot`, `/Marked true` and

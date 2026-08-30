@@ -6,14 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "eleventy --serve",
-    "build": "eleventy",
+    "build": "eleventy && node scripts/build-resume-pdfs.mjs",
     "clean": "rm -rf _site",
     "resumes:pdf": "node scripts/build-resume-pdfs.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:a11y": "node scripts/a11y-audit.mjs",
     "check:qa": "node scripts/qa-audit.mjs",
     "check:form": "node scripts/contact-form-test.mjs",
-    "check": "npm run build && npm run check:contrast && npm run check:a11y && npm run check:qa && npm run check:form"
+    "check": "npm run build && npm run check:contrast && npm run check:a11y && npm run check:qa && npm run check:form",
+    "build:pages": "eleventy"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",

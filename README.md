@@ -38,14 +38,13 @@ src/
     css/            tokens.css (design tokens) · site.css · resume.css
     fonts/          Inter, self-hosted — SIL OFL 1.1, licence included
     images/         headshot
-    resumes/        generated tagged PDFs (committed)
   *.njk             the pages
 scripts/
   check-contrast.mjs    measures 52 colour pairs against WCAG thresholds
   a11y-audit.mjs        axe-core + reflow, zoom, text-resize and landmark checks
   qa-audit.mjs          keyboard, target size, text spacing, links, HTML validity
   contact-form-test.mjs contact form behaviour, with and without JavaScript
-  build-resume-pdfs.mjs pre-renders each résumé to a tagged PDF
+  build-resume-pdfs.mjs renders each résumé page to a tagged PDF, into _site/
 docs/accessibility.md
 ```
 
@@ -55,13 +54,13 @@ docs/accessibility.md
 npm install
 
 npm run dev            # local server with live reload
-npm run build          # build to _site/
+npm run build          # build to _site/, including the résumé PDFs
 npm run check          # build, then all four audits below
 npm run check:contrast # 52 colour pairs measured against WCAG thresholds
 npm run check:a11y     # axe-core, reflow at 320px and 400% zoom, text at 200%
 npm run check:qa       # keyboard, target size, text spacing, links, HTML validity
 npm run check:form     # contact form behaviour, with and without JavaScript
-npm run resumes:pdf    # regenerate the four tagged PDFs (needs Chromium)
+npm run resumes:pdf    # re-render just the PDFs (part of `build`; needs Chromium)
 ```
 
 `npm run check` must pass before deploying. Both audits exit non-zero on
@@ -74,9 +73,10 @@ Everything readable on the site is in `src/_data/`. A few things worth knowing:
 **Contract availability.** `home.js` → `available: false` removes the "Available
 for contract work" tag from the hero.
 
-**Résumés.** Edit `src/_data/resumes.js`, then run `npm run build && npm run
-resumes:pdf` — the committed PDFs are not regenerated automatically, so they
-would otherwise drift from the HTML.
+**Résumés.** Edit `src/_data/resumes.js` and rebuild. The tagged PDFs are
+generated from the résumé pages by `npm run build`, not committed, so they
+cannot fall out of step with the HTML. (`npm run dev` does not render them, so
+the Download PDF link 404s in the dev server; run a build to see it work.)
 
 **Blog posts.** The six posts in `blog.js` are drafts with placeholder titles, as
 the design specifies. Adding `image: { src, alt }` to a post gives its card a
@@ -157,7 +157,9 @@ matters, put the site behind a host that can send headers.
 ### Deploying to Netlify instead
 
 `netlify.toml` is still committed and current: `npm run build`, publish `_site`,
-and it serves the full policy including the header-only directives. Netlify sets
+and it serves the full policy including the header-only directives. One caveat —
+the build renders the résumé PDFs through headless Chromium, so the build
+command needs `npx playwright install --with-deps chromium && npm run build`. Netlify sets
 `URL` itself and needs no path prefix. The audits replay its headers locally
 (`scripts/lib/serve.mjs`), and the QA audit asserts its policy still matches
 `site.js`, so the two cannot drift apart.
