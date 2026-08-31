@@ -1,0 +1,125 @@
+---
+layout: layouts/page.njk
+title: Speaking & Writing
+pageDescription: "Twenty-nine talks around the world — CSUN, WebAIM, EuroSTAR, M-Enabling, Agile Testing Days — plus W3C standards work and publications."
+permalink: /speaking/
+footerSpaced: true
+navCta:
+  label: Book me to speak
+  url: /#contact
+---
+<div class="wrap">
+  <section class="page-hero-tight" aria-labelledby="speaking-h">
+    <h1 class="page-title" id="speaking-h">Speaking &amp; writing</h1>
+    <p class="lede">{{ speaking.intro }}</p>
+  </section>
+
+  <section class="upcoming" aria-labelledby="upcoming-h">
+    <h2 id="upcoming-h" class="visually-hidden">Upcoming engagements</h2>
+    <ul class="upcoming-list" role="list">
+      {%- for item in speaking.upcoming %}
+      <li>
+        <span class="tag tag-accent">Upcoming · {{ item.when }}</span>
+        <span>{{ item.what }}</span>
+        <span class="upcoming-where">{{ item.where }}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <section class="split split-video" aria-labelledby="featured-h">
+    <div>
+      <p class="kicker">Featured talk</p>
+      <h2 id="featured-h" class="section-title">{{ speaking.featured.title }}</h2>
+      <p class="prose prose-narrow">{{ speaking.featured.copy }}</p>
+      <p class="btn-row"><a href="{{ speaking.featured.watchUrl }}" class="btn btn-ghost">Watch on YouTube<span class="visually-hidden"> (external site)</span></a></p>
+    </div>
+    <div class="video-frame">
+      {#- Titled, so it is announced as something meaningful when a
+          screen-reader user lands on it in the frames list.
+
+          cc_load_policy=1 turns captions on by default. Embedding a video
+          makes its captions this page's responsibility under SC 1.2.2, and
+          that cannot be verified from here — confirm the upload is captioned
+          on YouTube (auto-generated captions do not satisfy 1.2.2).
+          See docs/accessibility.md. -#}
+      <iframe src="https://www.youtube-nocookie.com/embed/{{ speaking.featured.videoId }}?cc_load_policy=1"
+              title="{{ speaking.featured.videoTitle }}"
+              loading="lazy"
+              allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+  </section>
+
+  <section class="section-talks" aria-labelledby="talks-h">
+    <p class="kicker">On stage</p>
+    <h2 id="talks-h" class="section-title">Selected talks</h2>
+    {#- A table wider than a narrow viewport scrolls inside its own region
+        rather than dragging the page sideways. The region is focusable so it
+        can be scrolled from the keyboard, and named so its purpose is clear. -#}
+    <section class="scroll-region" tabindex="0"
+             aria-label="Selected talks table, scrolls horizontally on small screens">
+      <table class="table table-talks">
+        <caption class="visually-hidden">Selected conference talks by year, title and event</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="col-year">Year</th>
+            <th scope="col">Talk</th>
+            <th scope="col">Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for talk in speaking.talks %}
+          <tr>
+            <td>{{ talk.year }}</td>
+            <td>{{ talk.title }}</td>
+            <td class="cell-event"{% if talk.eventLang %} lang="{{ talk.eventLang }}"{% endif %}>{{ talk.event }}</td>
+          </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </section>
+    <p class="table-note">Full history — 29 talks since 2022 — available on request, or see <a href="{{ site.links.empowerTalks }}">empoweraccessibility.com/talks</a>.</p>
+  </section>
+</div>
+
+<section class="band" aria-labelledby="standards-h">
+  <div class="wrap">
+    <p class="kicker">Standards &amp; community</p>
+    <h2 id="standards-h" class="section-title">Helping write the rules of the web</h2>
+    <ul class="grid grid-standards" role="list">
+      {%- for entry in speaking.standards %}
+      <li class="card">
+        <h3 class="card-kicker">{{ entry.title | safe }}</h3>
+        <p class="card-body">{{ entry.body | safe }}</p>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="section-pubs" aria-labelledby="pubs-h">
+    <p class="kicker">In print</p>
+    <h2 id="pubs-h" class="section-title">Publications</h2>
+    <ul class="pub-list" role="list">
+      {%- for pub in speaking.publications %}
+      <li>
+        {%- if pub.href %}<a href="{{ pub.href }}">{{ pub.title }}<span class="visually-hidden"> (external site)</span></a>
+        {%- else %}<span>{{ pub.title }}</span>{% endif %}
+        <span class="pub-meta"> — {{ pub.meta | safe }}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  <hr class="hr">
+
+  <section class="section-close" aria-labelledby="speaker-cta-h">
+    <h2 id="speaker-cta-h" class="section-title-sm">Need a speaker or trainer?</h2>
+    <p class="prose">Keynotes, workshops and panels on accessibility, AI and inclusive technology — in English or French, in person or remote. Speaker bio, headshot and session abstracts available on request.</p>
+    <div class="btn-row">
+      <a href="{{ "/#contact" | url }}" class="btn btn-primary">Contact me</a>
+    </div>
+  </section>
+</div>

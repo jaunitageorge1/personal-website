@@ -1,0 +1,63 @@
+---
+layout: layouts/page.njk
+title: Blog
+pageTitle: Off the clock — Jaunita Flessas
+pageDescription: "Notes from the rest of my life: hiking, language learning, cooking, fitness, travel and photography — with accessibility sneaking in anyway."
+permalink: /blog/
+navCta:
+  label: Get in touch
+  url: /#contact
+---
+<div class="wrap">
+  <section class="page-hero-tight" aria-labelledby="blog-h">
+    <h1 class="page-title" id="blog-h">Off the clock</h1>
+    <p class="lede">{{ blog.intro }}</p>
+    <ul class="tag-list hero-tags" role="list" aria-label="Topics">
+      {%- for topic in blog.topics %}
+      <li class="tag tag-outline">{{ topic }}</li>
+      {%- endfor %}
+    </ul>
+    <div class="btn-row">
+      <a href="{{ "/#contact" | url }}" class="btn btn-primary">Subscribe by email</a>
+    </div>
+  </section>
+
+  <section class="beyond" aria-labelledby="beyond-h">
+    <p class="kicker">Beyond the résumé</p>
+    <h2 id="beyond-h" class="section-title">The person behind the certifications</h2>
+    <div class="beyond-cols">
+      {%- for paragraph in blog.beyond %}
+      <p>{{ paragraph }}</p>
+      {%- endfor %}
+    </div>
+  </section>
+
+  <section class="post-grid" aria-labelledby="posts-h">
+    <h2 id="posts-h" class="visually-hidden">Posts</h2>
+    {%- for post in blog.posts %}
+    <article class="card post-card">
+      {#- A draft with no photograph yet gets a decorative panel: it depicts
+          nothing, so it is hidden from assistive technology rather than given
+          invented alt text. -#}
+      {%- if post.image %}
+      <div class="post-cover lighten">
+        <img src="{{ post.image.src }}" alt="{{ post.image.alt }}" loading="lazy" decoding="async">
+      </div>
+      {%- else %}
+      <div class="post-cover post-cover-empty" aria-hidden="true"></div>
+      {%- endif %}
+      <p class="card-kicker">{{ post.topic }} · {{ post.date }}</p>
+      <h3 class="card-title post-title">{{ post.title }}</h3>
+      <p class="card-body">{{ post.blurb }}</p>
+      <p class="card-meta">{{ post.read }}</p>
+    </article>
+    {%- endfor %}
+  </section>
+
+  <hr class="hr">
+
+  <section class="section-close" aria-labelledby="drafts-h">
+    <h2 id="drafts-h" class="section-title-sm">These posts are drafts</h2>
+    <p class="prose">Titles and blurbs are placeholders seeded from my hobbies — real writing lands here as it’s finished. Want new posts in your inbox? <a href="{{ "/#contact" | url }}">Subscribe through the contact form</a>.</p>
+  </section>
+</div>

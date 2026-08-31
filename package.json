@@ -1,0 +1,25 @@
+{
+  "name": "jaunitaflessas-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal portfolio and services site for Jaunita Flessas — built to WCAG 2.2 AA.",
+  "type": "module",
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy && node scripts/build-resume-pdfs.mjs",
+    "clean": "rm -rf _site",
+    "resumes:pdf": "node scripts/build-resume-pdfs.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:a11y": "node scripts/a11y-audit.mjs",
+    "check:qa": "node scripts/qa-audit.mjs",
+    "check:form": "node scripts/contact-form-test.mjs",
+    "check": "npm run build && npm run check:contrast && npm run check:a11y && npm run check:qa && npm run check:form",
+    "build:pages": "eleventy"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@axe-core/playwright": "^4.10.2",
+    "html-validate": "^9.7.1",
+    "playwright": "^1.56.0"
+  }
+}

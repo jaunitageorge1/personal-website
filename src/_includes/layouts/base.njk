@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="{{ site.locale }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{#- The policy has to precede every resource reference below it, or those
+    fetches start before it is in force. GitHub Pages cannot send headers, so
+    this tag is the enforcement point there. -#}
+<meta http-equiv="Content-Security-Policy" content="{{ site.csp.meta }}">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>{{ pageTitle or (title + " — " + site.name) }}</title>
+<meta name="description" content="{{ pageDescription or site.description }}">
+<link rel="canonical" href="{{ page.url | url | absoluteUrl(site.url) }}">
+{% if noindex %}<meta name="robots" content="noindex">{% endif %}
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:title" content="{{ pageTitle or (title + " — " + site.name) }}">
+<meta property="og:description" content="{{ pageDescription or site.description }}">
+<meta property="og:url" content="{{ page.url | url | absoluteUrl(site.url) }}">
+
+<meta name="theme-color" content="#161826">
+<link rel="icon" href="{{ "/assets/favicon.svg" | url }}" type="image/svg+xml">
+
+{#- The two font files are the only render-blocking sub-resources; preload the
+    Latin subset so first paint uses Inter rather than swapping into it. -#}
+<link rel="preload" href="{{ "/assets/fonts/inter-latin.woff2" | url }}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ "/assets/css/tokens.css" | url }}">
+<link rel="stylesheet" href="{{ "/assets/css/site.css" | url }}">
+{%- if extraStyles %}
+{%- for href in extraStyles %}
+<link rel="stylesheet" href="{{ href | url }}">
+{%- endfor %}
+{%- endif %}
+</head>
+<body>
+{{ content | safe }}
+{%- if extraScripts %}
+{%- for src in extraScripts %}
+<script src="{{ src | url }}" defer></script>
+{%- endfor %}
+{%- endif %}
+</body>
+</html>

@@ -1,0 +1,851 @@
+/* ============================================================================
+   Nocturne — components and page composition.
+
+   Plain CSS on semantic HTML. No client-side JavaScript anywhere on this site.
+   Component classes (.btn, .card, .tag, .nav, .table, .input) are ported from
+   the design system; the "page composition" half translates the prototypes'
+   inline styles into named, reusable rules.
+
+   Sizing rules of the house:
+   - all type in rem, so it tracks the reader's browser font-size preference;
+   - all measures in ch / % / fr, so columns reflow instead of clipping;
+   - no fixed heights on anything that holds text, so line-height, word- and
+     letter-spacing can all be overridden without content being cut off
+     (WCAG 2.2 AA — 1.4.4, 1.4.10, 1.4.12).
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The root font size is never set: whatever the reader has chosen wins, and
+   every rem below is relative to it. */
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-15);
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--color-text);
+  text-wrap: pretty;
+  background:
+    radial-gradient(75rem 45rem at 82% -10rem,
+      color-mix(in srgb, var(--color-accent-900) 75%, transparent), transparent 60%),
+    radial-gradient(68.75rem 50rem at -10% 100%,
+      color-mix(in srgb, black 30%, transparent), transparent 55%),
+    var(--color-bg);
+  /* Long words and URLs wrap rather than forcing the page sideways at 320px. */
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-2);
+  /* Hierarchy comes from size and space, never from weight. */
+  /* Display type breaks into even lines instead of leaving one orphan word;
+     ignored by browsers that do not support it, which simply wrap as before. */
+  text-wrap: balance;
+}
+h1 { font-size: var(--fs-42); }
+h2 { font-size: var(--fs-32); }
+h3 { font-size: var(--fs-25); }
+h4 { font-size: var(--fs-20); }
+h5 { font-size: var(--fs-17); }
+h6 { font-size: var(--fs-13); letter-spacing: 0.08em; text-transform: uppercase; }
+
+p { margin: 0 0 var(--space-3); }
+img { display: block; max-width: 100%; height: auto; }
+figure { margin: 0; }
+
+a {
+  color: var(--color-accent-300);
+  text-underline-offset: 0.1875rem;
+}
+a:hover { color: var(--color-accent-200); }
+
+/* Focus is never removed, only restyled — on every focusable thing, on every
+   page, including the scroll regions and the skip link. */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+
+/* Available to assistive technology, invisible on screen. Never display:none. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Photographs sit in a lighten wrapper so dark photo grounds sink into the
+   page ground instead of sitting on it as a black rectangle. */
+.lighten {
+  mix-blend-mode: lighten;
+  background-color: transparent;
+}
+
+/* — skip link — */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-section);
+  color: var(--color-text);
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-14);
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0.75rem;
+  top: 0.75rem;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* — rules — */
+/* Rules fade to transparent at both ends instead of stopping cleanly: a
+   Nocturne signature. 48px of ramp at each end, painted from the divider. */
+.hr {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: linear-gradient(to right,
+    transparent, var(--color-divider) 3rem,
+    var(--color-divider) calc(100% - 3rem), transparent);
+}
+
+/* — buttons — */
+/* Always outlined, never filled. Min 24×24px target (WCAG 2.2 AA 2.5.8);
+   these land near 32px tall at the default font size and grow from there. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 1.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-14);
+  line-height: 1.2;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { color: var(--color-accent); border-color: var(--color-accent); }
+.btn-primary:hover { color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.btn-primary:active { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+.btn-secondary { color: var(--color-text); border-color: var(--color-border-control); }
+.btn-secondary:hover { color: var(--color-text); background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+
+.btn-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--lead);
+}
+
+/* — forms — */
+.field > label {
+  display: block;
+  font-size: var(--fs-12);
+  margin-bottom: 0.3125rem;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.625rem;
+  font: inherit;
+  font-size: var(--fs-14);
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 7rem; resize: vertical; }
+
+/* — cards — */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  /* min-width:0 lets a card shrink inside a grid track instead of forcing
+     the whole row wider than the viewport. */
+  min-width: 0;
+}
+.card-kicker {
+  font-size: var(--fs-10);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0;
+}
+.card-title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-17);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.card-body {
+  margin: 0;
+  font-size: var(--fs-13);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-text) 80%, transparent);
+  flex: 1;
+}
+.card-body a { text-decoration: underline; }
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--fs-11);
+  /* The DS ships this at 50% of the text colour, which measures 4.25:1 on
+     --color-surface — under the 4.5:1 this site's WCAG 2.2 AA claim needs.
+     Raised to 62% (5.7:1). Logged in docs/accessibility.md. */
+  color: color-mix(in srgb, var(--color-text) 62%, transparent);
+  margin: 0;
+}
+.card-kicker + .card-title,
+.card-title + .card-body { margin-top: 0.5rem; }
+.card-link { margin: 0.75rem 0 0; font-size: var(--fs-14); }
+.card-link a { text-decoration: underline; }
+
+/* — tags — */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-11);
+  letter-spacing: 0.02em;
+  padding: 0.1875rem 0.625rem;
+  border-radius: calc(var(--radius-md) * 0.75);
+  /* A pill's text never escapes the pill. */
+  white-space: nowrap;
+  /* …but a pill longer than the viewport wraps rather than pushing it wide. */
+  max-width: 100%;
+  overflow-wrap: normal;
+}
+.tag-accent { background: var(--color-accent-800); color: var(--color-accent-100); }
+.tag-neutral { background: var(--color-neutral-800); color: var(--color-neutral-100); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+.tag-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* — navigation — */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
+  padding-block: var(--space-4);
+  padding-inline: max(var(--gutter), calc((100% - var(--measure)) / 2 + var(--gutter)));
+}
+.nav-brand {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-18);
+  margin-right: auto;
+}
+.nav a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--fs-14);
+  white-space: nowrap;
+}
+.nav a:hover { color: var(--color-accent); text-decoration: underline; }
+/* The current page is marked by aria-current for assistive technology and by
+   colour *plus* an underline on screen — never by colour alone. */
+.nav a[aria-current="page"] {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.375rem;
+}
+.nav a.btn[aria-current="page"] { text-decoration: none; }
+
+/* — tables — */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-14);
+}
+.table th {
+  text-align: left;
+  font-size: var(--fs-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2);
+  border-bottom: 1px solid transparent;
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid transparent;
+}
+/* Row rules are painted per row, not per cell, so the end-fade spans the whole
+   row rather than restarting at every column. */
+.table thead tr {
+  background: linear-gradient(to right,
+    transparent, var(--color-divider) 3rem,
+    var(--color-divider) calc(100% - 3rem), transparent) no-repeat bottom / 100% 1px;
+}
+.table tbody tr {
+  background: linear-gradient(to right,
+    transparent, color-mix(in srgb, var(--color-text) 8%, transparent) 3rem,
+    color-mix(in srgb, var(--color-text) 8%, transparent) calc(100% - 3rem), transparent)
+    no-repeat bottom / 100% 1px;
+}
+.table tbody tr:hover {
+  background:
+    linear-gradient(color-mix(in srgb, var(--color-text) 4%, transparent),
+                    color-mix(in srgb, var(--color-text) 4%, transparent)) no-repeat 0 0 / 100% 100%,
+    linear-gradient(to right,
+      transparent, color-mix(in srgb, var(--color-text) 8%, transparent) 3rem,
+      color-mix(in srgb, var(--color-text) 8%, transparent) calc(100% - 3rem), transparent)
+      no-repeat bottom / 100% 1px;
+}
+
+/* ============================================================================
+   Page composition
+   ========================================================================= */
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* The one saturated move per page: a full-bleed deep-indigo band. */
+.band {
+  padding: 4.375rem 0;
+  background:
+    radial-gradient(56.25rem 26.25rem at 85% -40%,
+      color-mix(in srgb, var(--color-section-glow) 70%, transparent), transparent 64%),
+    var(--color-section);
+}
+
+.kicker {
+  font-size: var(--fs-13);
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 var(--lead-half);
+}
+/* On the indigo band the base accent loses contrast; step up one ramp stop. */
+.band .kicker { color: var(--color-accent-200); }
+
+.section-title {
+  font-size: var(--fs-32);
+  line-height: 1.31;
+  letter-spacing: -0.012em;
+  margin: 0;
+}
+.section-title-sm {
+  font-size: var(--fs-24);
+  line-height: 1.17;
+  margin: 0;
+}
+
+.lede {
+  font-size: var(--fs-17);
+  line-height: var(--lead);
+  max-width: 58ch;
+  margin: var(--lead) 0 0;
+  color: var(--color-text);
+}
+.prose {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  margin: var(--lead-3) 0 0;
+  max-width: 58ch;
+}
+.prose a { text-decoration: underline; }
+.prose-wide { max-width: 62ch; }
+.prose-narrow { max-width: 48ch; }
+
+/* — hero — */
+.hero {
+  padding: 7rem 0 5.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.625rem clamp(1.5rem, 5vw, 6rem);
+  align-items: center;
+}
+.hero-body {
+  flex: 1 1 32.5rem;
+  min-width: min(100%, 23.75rem);
+}
+.hero-title {
+  font-size: var(--fs-hero);
+  line-height: 1.11;
+  letter-spacing: -0.015em;
+  /* optical left margin — pulls the cap stem back onto the gutter line */
+  margin: 0 0 0 -0.06em;
+}
+.hero-title span { display: block; }
+.hero-intro {
+  font-size: var(--fs-17);
+  line-height: var(--lead);
+  max-width: 58ch;
+  margin: 2.25rem 0 0;
+  color: var(--color-text);
+}
+.hero-note {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  max-width: 58ch;
+  margin: var(--lead-3) 0 0;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.hero-note a { text-decoration: underline; }
+.hero-tags { margin-top: var(--lead-3); }
+.hero-availability { margin: 0 0 var(--lead); }
+.hero-portrait { flex: 0 1 18.75rem; }
+.hero-portrait img {
+  width: min(18.75rem, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Inner-page heroes are a touch smaller than Home's. */
+.page-hero { padding: 6.125rem 0 3.5rem; }
+.page-hero-tight { padding: 6.125rem 0 2.625rem; }
+.page-title {
+  font-size: var(--fs-page-title);
+  line-height: 1.11;
+  letter-spacing: -0.015em;
+  margin: 0 0 0 -0.06em;
+}
+
+/* — stat band — */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+  gap: 2.625rem 1.75rem;
+  margin: 0;
+  padding: 0;
+}
+.stats > div { min-width: 0; }
+.stat-value {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-stat);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  margin: 0 0 0 -0.055em;
+}
+.stat-label {
+  font-size: var(--fs-13);
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  margin: var(--lead-half) 0 0;
+}
+
+/* — generic sections and grids — */
+.section { padding: 1.75rem 0 3.5rem; }
+.section-values { padding: 6.125rem 0 4.375rem; }
+.section-hire { padding: 4.375rem 0 1.75rem; }
+.section-contact { padding: 2.625rem 0 3.5rem; }
+.section-a11y { padding: 0.875rem 0 2.625rem; }
+.section-close { padding: 3.5rem 0; }
+.section-close-wide { padding: 4.375rem 0 3.5rem; }
+
+.grid {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 2.625rem;
+}
+.grid-cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14.375rem), 1fr)); gap: var(--space-4); }
+.grid-projects { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.75rem), 1fr)); }
+.grid-wide { grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.25rem), 1fr)); }
+.grid-standards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.625rem), 1fr)); gap: var(--space-4); }
+
+/* — numbered service rows (Home overview) — */
+.svc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem clamp(1.5rem, 4vw, 4.5rem);
+  align-items: baseline;
+  padding: 2.625rem 0;
+  border-top: 1px solid var(--color-neutral-700);
+}
+.svc-row:first-of-type { border-top: none; }
+.svc-num {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-15);
+  line-height: var(--lead);
+  color: var(--color-accent);
+  font-feature-settings: "tnum" 1;
+  margin: 0;
+  flex: 0 0 3rem;
+}
+.svc-title {
+  font-size: var(--fs-24);
+  line-height: 1.17;
+  letter-spacing: -0.01em;
+  margin: 0;
+  flex: 1 1 15rem;
+  min-width: min(100%, 13.75rem);
+}
+.svc-copy {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  margin: 0;
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  max-width: 52ch;
+  flex: 1 1 40ch;
+  min-width: 0;
+}
+
+/* — services detail page — */
+.svc-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem clamp(1.5rem, 4vw, 4.5rem);
+  padding: 3.5rem 0;
+  border-top: 1px solid var(--color-neutral-700);
+  align-items: baseline;
+}
+.svc-detail-body {
+  flex: 1 1 40ch;
+  min-width: min(100%, 34ch);
+}
+.svc-detail-title {
+  font-size: var(--fs-28);
+  line-height: 1.21;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.link-list {
+  margin: var(--lead-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-8);
+}
+.link-list li { font-size: var(--fs-15); line-height: var(--lead); }
+.link-list a { text-decoration: underline; }
+
+/* — two-column split (photography, featured talk) — */
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 23.75rem), 1fr));
+  gap: 1.75rem clamp(1.5rem, 5vw, 6rem);
+  align-items: center;
+}
+.split > * { min-width: 0; }
+.split-photo { padding: 3.5rem 0 5.25rem; }
+.split-photo img { width: 100%; max-width: 26.875rem; aspect-ratio: 2 / 3; object-fit: cover; }
+.split-video { padding: 1.75rem 0 3.5rem; }
+.video-frame {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-neutral-700);
+}
+.video-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+/* Defensive only, and worth being honest about what it does and does not do:
+   tabbing to an <iframe> moves focus *into* the embedded document, where
+   `iframe:focus` never matches and this rule therefore never fires. It covers
+   the case where focus is put on the element itself — programmatically, or by
+   a browser that behaves that way — and nothing more. Indicating focus inside
+   the player is the player's job. On the wrapper rather than the iframe
+   because the wrapper clips its overflow. */
+.video-frame:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* — pull quote, with hanging punctuation — */
+.quote-section { padding: 0 0 5.25rem; }
+.quote {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  font-size: var(--fs-quote);
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  max-width: 34ch;
+  margin: 0;
+  text-indent: -0.474em;
+}
+.quote-attribution {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  margin: 2.625rem 0 0;
+  text-indent: -1.267em;
+}
+
+/* — contact form — */
+.contact-form {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 35rem;
+  margin-top: 1.75rem;
+}
+.contact-note {
+  font-size: var(--fs-13);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  margin: 0;
+}
+/* The no-script explanation, and the status line the script writes into after
+   handing the message to the mail app. Both are notices rather than decoration,
+   so they carry an accent edge and real padding instead of relying on colour. */
+.form-notice,
+.contact-status:not(:empty) {
+  margin: 0;
+  padding: 0.75rem 0.875rem;
+  font-size: var(--fs-14);
+  line-height: 1.6;
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+}
+.form-notice a,
+.contact-status a { text-decoration: underline; }
+/* Empty at rest, and taking no space — but always in the DOM, because a live
+   region has to exist before content is put into it to be announced. */
+.contact-status:empty { display: none; }
+
+.field-hint {
+  font-size: var(--fs-12);
+  line-height: 1.5;
+  margin: 0.3125rem 0 0;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+/* Off-screen spam trap. Never focusable, never announced, never visible —
+   but never display:none either, or the bots would skip it too. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* — résumé links line — */
+.resume-links {
+  margin: var(--lead-3) 0 0;
+  font-size: var(--fs-14);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+}
+.resume-links a { text-decoration: underline; }
+
+/* — speaking page — */
+.upcoming { padding: 0.875rem 0 1.75rem; }
+.upcoming-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.875rem;
+  max-width: 80ch;
+}
+.upcoming-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+}
+.upcoming-where { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
+
+.section-talks { padding: 2.625rem 0 3.5rem; }
+.section-talks .section-title { margin-bottom: 1.75rem; }
+/* Wide content scrolls inside its own region, never the page. The region is
+   keyboard focusable so it can be scrolled without a mouse, is named for
+   screen readers, and shows a focus ring when it takes focus. */
+.scroll-region { overflow-x: auto; }
+.scroll-region:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.table-talks { min-width: 34rem; }
+.table-talks td:first-child { font-feature-settings: "tnum" 1; white-space: nowrap; }
+.table-talks .col-year { width: 8ch; }
+.table-talks .cell-event { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
+.table-note {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  margin: 1.75rem 0 0;
+}
+.table-note a { text-decoration: underline; }
+
+.section-pubs { padding: 4.375rem 0 1.75rem; }
+.pub-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--lead-3);
+  max-width: 70ch;
+}
+.pub-list li { font-size: var(--fs-15-5); line-height: var(--lead); }
+.pub-list a { text-decoration: underline; }
+.pub-meta { color: color-mix(in srgb, var(--color-text) 64%, transparent); }
+
+/* — training catalogue band — */
+.topic-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
+  gap: 2.625rem clamp(1.5rem, 4vw, 4.5rem);
+  margin-top: 2.625rem;
+}
+.topic-cols > div { min-width: 0; }
+.topic-cols h3 {
+  font-size: var(--fs-17);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.topic-list {
+  margin: var(--lead-half) 0 0;
+  padding: 0 0 0 1.2em;
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 82%, transparent);
+}
+.topic-note {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  margin: var(--lead-3) 0 0;
+  max-width: 44ch;
+}
+
+/* — blog — */
+.beyond { padding: 0.875rem 0 2.625rem; }
+.beyond-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.25rem), 1fr));
+  gap: 1.75rem clamp(1.5rem, 4vw, 4.5rem);
+  margin-top: 1.75rem;
+  max-width: 100ch;
+}
+.beyond-cols p {
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  margin: 0;
+}
+.post-grid {
+  padding: 1.75rem 0 3.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 1.75rem;
+}
+.post-card { gap: 0.75rem; }
+.post-cover {
+  margin: -0.25rem 0 0.25rem;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+.post-cover img { width: 100%; height: 100%; object-fit: cover; }
+/* Draft cards have no photograph yet. This panel is decoration, not an image:
+   it carries no alt text because it depicts nothing. */
+.post-cover-empty {
+  background:
+    radial-gradient(120% 140% at 20% 0%,
+      color-mix(in srgb, var(--color-accent-900) 90%, transparent), transparent 70%),
+    var(--color-neutral-900);
+  border: 1px solid var(--color-neutral-800);
+}
+.post-title { font-size: var(--fs-20); line-height: 1.3; margin: 0; }
+
+/* — footer, outside <main> on every page — */
+.site-footer {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 var(--gutter) 3.5rem;
+  font-size: var(--fs-13);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.site-footer-spaced { padding-top: 3.5rem; }
+.site-footer a { text-decoration: underline; }
+
+/* Vertical rhythm compresses on small screens; the type scale does not, so
+   line length stays readable rather than everything shrinking at once. */
+@media (max-width: 37.5em) {
+  .hero { padding: 3.5rem 0 2.625rem; }
+  .page-hero, .page-hero-tight { padding: 3.5rem 0 1.75rem; }
+  .section-values { padding: 3.5rem 0 2.625rem; }
+  .band { padding: 2.625rem 0; }
+  .svc-row, .svc-detail { padding: 1.75rem 0; }
+  .split-photo { padding: 1.75rem 0 2.625rem; }
+  .quote-section { padding: 0 0 2.625rem; }
+  .section-pubs { padding: 2.625rem 0 1.75rem; }
+  .section-hire { padding: 2.625rem 0 1.75rem; }
+}
+
+/* The site ships with no animation or transition of any kind, so there is
+   nothing here for prefers-reduced-motion to switch off. This block is a
+   tripwire: if motion is ever added later, it stops here. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Windows High Contrast / forced-colors: keep the focus ring and the card and
+   frame edges visible once the palette is replaced by the user's own. */
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid CanvasText; }
+  .card, .video-frame, .post-cover-empty { border: 1px solid CanvasText; }
+  .btn { border-color: CanvasText; }
+}

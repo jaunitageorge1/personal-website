@@ -1,0 +1,10 @@
+---
+layout: layouts/base.njk
+---
+{#- Shell shared by the four content pages: skip link, nav, <main>, footer. -#}
+<a class="skip-link" href="#main">Skip to main content</a>
+{% include "partials/nav.njk" %}
+<main id="main">
+{{ content | safe }}
+</main>
+{% include "partials/footer.njk" %}

@@ -1,0 +1,16 @@
+---
+layout: layouts/resume.njk
+pagination:
+  data: resumes.items
+  size: 1
+  alias: cv
+  # Without this, only the first paginated page joins collections.all — and
+  # three of the four résumés would silently drop out of the sitemap.
+  addAllPagesToCollections: true
+permalink: "/resume/{{ cv.slug }}/"
+eleventyComputed:
+  pageTitle: "Jaunita Flessas — {{ cv.navLabel }} résumé"
+  pageDescription: "{{ cv.navLabel }} résumé for Jaunita Flessas — accessible HTML and tagged PDF."
+extraStyles: ["/assets/css/resume.css"]
+extraScripts: ["/assets/js/contact.js"]
+---

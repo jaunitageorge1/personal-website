@@ -1,0 +1,138 @@
+/* ============================================================================
+   Nocturne — design tokens.
+   Ported verbatim from the design handoff's `_ds/styles.css`. These values are
+   the source of truth for colour, type, spacing, radius and elevation. Retune
+   here; never hard-code a raw hex in a component.
+   ========================================================================= */
+
+/* Inter, self-hosted. One variable file per subset, weights 400–700. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-accent: #9184d9; /* the product blurple — OKLCH hue 289.2 at L 0.660 */
+  --color-accent-2: #a7a1db;
+  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  /* The divider is a decorative hairline: it measures 1.58:1 against both the
+     page ground and the card fill, which is right for a rule you should barely
+     notice and wrong for the edge of a control. WCAG 2.2 AA 1.4.11 asks 3:1 of
+     any boundary that is what identifies a component, so text fields and
+     secondary buttons take this instead — the lightest step on the neutral
+     ramp that clears the bar, at 3.52:1. Rules, table row strips and section
+     dividers keep --color-divider. */
+  --color-border-control: var(--color-neutral-600);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f3f5fe;
+  --color-neutral-200: #e4e7f5;
+  --color-neutral-300: #cfd3e5;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
+
+  --color-accent-100: #f5f4ff;
+  --color-accent-200: #e7e5fe;
+  --color-accent-300: #d2cefd;
+  --color-accent-400: #b5abfc;
+  --color-accent-500: #968ae0;
+  --color-accent-600: #796cbf;
+  --color-accent-700: #5d5294;
+  --color-accent-800: #423a6a;
+  --color-accent-900: #2b2741;
+
+  --color-accent-2-100: #f5f4ff;
+  --color-accent-2-200: #e7e5fe;
+  --color-accent-2-300: #d2cefd;
+  --color-accent-2-400: #b5afe8;
+  --color-accent-2-500: #9690c9;
+  --color-accent-2-600: #7972a9;
+  --color-accent-2-700: #5c5783;
+  --color-accent-2-800: #423e5d;
+  --color-accent-2-900: #2b293a;
+
+  /* Saturated deep-indigo band ground. One saturated move per page. */
+  --color-section: #262a60;
+  --color-section-glow: #353b80;
+  --color-section-ghost: #4c5397;
+
+  --font-heading: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading-weight: 500;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --space-1: 0.175rem;
+  --space-2: 0.35rem;
+  --space-3: 0.525rem;
+  --space-4: 0.7rem;
+  --space-6: 1.05rem;
+  --space-8: 1.4rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+
+  --shadow-sm: 0 0 0 1px #3f424d;
+  --shadow-md: 0 0 0 1px #595d6c, 0 0.375rem 1.125rem rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 0 0 1px #9397ab, 0 1rem 2.5rem rgba(0, 0, 0, 0.65);
+
+  /* --- Type scale ---------------------------------------------------------
+     The handoff specifies type in px. Those values are reproduced here in rem
+     against a 16px root, so the design's proportions are preserved *and* the
+     text still responds to the reader's own browser font-size preference
+     (WCAG 2.2 AA — 1.4.4 Resize Text). The root font size is never overridden.
+     Token names carry the design's px value so the two stay traceable. */
+  --fs-10: 0.625rem;
+  --fs-11: 0.6875rem;
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-15: 0.9375rem;
+  --fs-15-5: 0.96875rem;
+  --fs-17: 1.0625rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-25: 1.5625rem;
+  --fs-28: 1.75rem;
+  --fs-32: 2rem;
+  --fs-42: 2.625rem;
+
+  /* Fluid display sizes. Each carries a rem term inside the fluid middle so
+     the size tracks the reader's font-size preference as well as the
+     viewport — a bare vw value would ignore it. */
+  --fs-hero: clamp(2.75rem, 0.9rem + 5.8vw, 5.25rem);      /* 44 → 84px */
+  --fs-page-title: clamp(2.5rem, 1.1rem + 4.4vw, 4rem);     /* 40 → 64px */
+  --fs-stat: clamp(2.25rem, 1.2rem + 3.3vw, 3.25rem);       /* 36 → 52px */
+  --fs-quote: clamp(1.5rem, 0.9rem + 1.9vw, 2.125rem);      /* 24 → 34px */
+
+  --measure: 75rem;
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --lead: 1.75rem;        /* the 28px leading unit */
+  --lead-half: 0.875rem;  /* 14px half-step */
+  --lead-3: 1.3125rem;    /* 21px three-quarter step */
+}
