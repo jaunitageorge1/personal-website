@@ -28,7 +28,7 @@ extraScripts: ["/assets/js/contact.js"]
       </div>
     </div>
     <div class="hero-portrait lighten">
-      <img src="{{ home.portrait.src }}" alt="{{ home.portrait.alt }}"
+      <img src="{{ home.portrait.src | url }}" alt="{{ home.portrait.alt }}"
            width="{{ home.portrait.width }}" height="{{ home.portrait.height }}"
            fetchpriority="high" decoding="async">
     </div>
@@ -106,7 +106,7 @@ extraScripts: ["/assets/js/contact.js"]
       <p class="btn-row"><a href="{{ site.links.picflow }}" class="btn btn-ghost">Browse the full gallery on Picflow<span class="visually-hidden"> (external site)</span></a></p>
     </div>
     <figure class="lighten">
-      <img src="{{ home.photograph.src }}" alt="{{ home.photograph.alt }}"
+      <img src="{{ home.photograph.src | url }}" alt="{{ home.photograph.alt }}"
            width="{{ home.photograph.width }}" height="{{ home.photograph.height }}"
            loading="lazy" decoding="async">
     </figure>
