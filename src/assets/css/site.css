@@ -504,6 +504,12 @@ textarea.input { min-height: 7rem; resize: vertical; }
 .grid-projects { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.75rem), 1fr)); }
 .grid-wide { grid-template-columns: repeat(auto-fit, minmax(min(100%, 21.25rem), 1fr)); }
 .grid-standards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.625rem), 1fr)); gap: var(--space-4); }
+/* Six short cards in two rows: without this the row whose copy runs a line
+   longer is visibly taller than the other, and the set looks uneven. Every
+   row takes the tallest row's height, so all six cards match. `1fr` rows
+   still floor at their content's minimum, so nothing clips at 200% text or
+   with text-spacing overrides. */
+.grid-standards { grid-auto-rows: 1fr; }
 
 /* — numbered service rows (Home overview) — */
 .svc-row {
