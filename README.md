@@ -44,6 +44,7 @@ scripts/
   a11y-audit.mjs        axe-core + reflow, zoom, text-resize and landmark checks
   qa-audit.mjs          keyboard, target size, text spacing, links, HTML validity
   contact-form-test.mjs contact form behaviour, with and without JavaScript
+  verify-live.mjs       the deployed site at its real URL, run by CI after deploy
   build-resume-pdfs.mjs renders each résumé page to a tagged PDF, into _site/
 docs/accessibility.md
 ```
@@ -113,7 +114,9 @@ nothing.
 
 The site deploys to **GitHub Pages** from `.github/workflows/deploy.yml`, on
 every push to `main` (or on demand via *Actions → Deploy to GitHub Pages → Run
-workflow*).
+workflow*). Running it from any other branch builds and audits but stops before
+deploying — a dry run — because the `github-pages` environment only accepts
+deployments from `main`.
 
 One-time setup, done by hand in the repository settings: **Settings → Pages →
 Build and deployment → Source: GitHub Actions**. The workflow cannot do this
@@ -139,6 +142,24 @@ passes — so a change that breaks the site's WCAG 2.2 AA claim cannot reach the
 live URL. `.github/workflows/check.yml` runs the same audits on every pull
 request, plus a check that the committed résumé PDFs still match the résumé
 pages.
+
+### Verifying the live site
+
+The build job proves the build; a third job, `verify`, proves the deploy. After
+`deploy-pages` reports the URL it hits the real site from the runner and checks
+that every page the sitemap lists is served, that every same-origin link and
+asset resolves under the real path prefix, that the PDFs come back as PDFs, that
+the CSP meta tag survived, and that axe and reflow still pass with the
+third-party resources loading for real rather than blocked. That is the class
+of failure only a live check finds — the first local run of it caught a headshot
+whose `src` had skipped the `url` filter and would have 404'd under `/<repo>/`.
+
+A failure there cannot undo a deploy; it makes the run red so the problem is
+seen rather than found by a visitor. Run it by hand against any deployed copy:
+
+```bash
+node scripts/verify-live.mjs https://jaunitageorge1.github.io/personalwebsite/
+```
 
 ### The path prefix
 

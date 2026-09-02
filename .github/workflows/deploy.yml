@@ -12,10 +12,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Least privilege: the workflow default is read-only; only the deploy job
+# needs to write Pages and mint an OIDC token.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Never let two deploys race; let a run in progress finish rather than
 # cancelling it half-published.
@@ -71,10 +71,51 @@ jobs:
 
   deploy:
     needs: build
+    # The github-pages environment is created with a deployment-branch policy
+    # limited to the default branch. A workflow_dispatch from any other branch
+    # still builds and audits — a useful dry run — but stops here rather than
+    # failing at the environment gate.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # The build job proves the build; this proves the deploy. It hits the real
+  # URL from the runner: every page the sitemap lists is served, every
+  # same-origin link and asset resolves under the real path prefix, the PDFs
+  # come back as PDFs, the CSP meta tag survived, and axe and reflow still
+  # pass with third-party resources loading for real rather than blocked.
+  # A failure here cannot undo the deploy — it makes the run red so the
+  # problem is seen rather than found by a visitor.
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # EXPECTED_BUILD is the commit just deployed; the script waits until the
+      # host serves that build (/build.txt) before checking anything, so it can
+      # tell this deploy from the previous one still sitting at the CDN edge.
+      - name: Verify the live site
+        run: node scripts/verify-live.mjs "${{ needs.deploy.outputs.page_url }}"
+        env:
+          EXPECTED_BUILD: ${{ github.sha }}

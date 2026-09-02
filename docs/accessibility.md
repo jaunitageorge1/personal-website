@@ -76,6 +76,14 @@ strip the `role="list"` this design needs (see below); `wcag/h32` wants a submit
 button in the static markup, which the contact form deliberately does not have
 (also below).
 
+### `scripts/verify-live.mjs` (CI only)
+
+Runs after every deploy, against the live URL, from the GitHub runner. Repeats
+the axe and reflow checks with third-party resources loading for real instead of
+blocked — the embedded video and the Picflow photograph — and confirms every
+page, link, asset and PDF is actually served under the deployed path. The
+build-time audits cannot see any of that.
+
 ### `npm run check:form`
 
 Twenty behavioural assertions on the contact form in a real browser — the one
