@@ -133,8 +133,6 @@ const checks = [
   text(".skip-link", "--color-text", "--color-section"),
   text(".text-muted (55%)", mix("--color-text", 55, PAGE), PAGE),
   text(".resume-toolbar label (60%)", mix("--color-text", 60, PAGE), PAGE),
-  text(".form-notice / .contact-status", "--color-text",
-       mix("--color-accent", 10, SURFACE)),
 
   /* --- résumé documents, on white --- */
   text("résumé body #23242e", "#23242e", WHITE),

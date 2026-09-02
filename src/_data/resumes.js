@@ -8,12 +8,6 @@
  * HTML (a <strong>, an <em>, a lang-tagged span) and are rendered unescaped.
  */
 const contact = {
-  /* The site itself exposes no email address anywhere — the contact form is
-     the only route in. A résumé is the one exception: it is a document sent to
-     recruiters, and one without contact details does not do its job. Set this
-     to false to drop the address and phone numbers from the public HTML
-     résumés and their PDFs, leaving the site's contact form as the only route. */
-  showDirectContact: true,
   location: "Melbourne, AU (US citizen, full AU working rights)",
   email: "jaunitaflessas@gmail.com",
   phones: ["+61 457 037 690", "+1 253 271 2167"],
@@ -66,7 +60,7 @@ export default {
           items: [
             "W3C: AGWG, ARIA &amp; APA member; WCAG 2.2/3.0 contributor; subgroup lead",
             "Internet Society: Outreach Officer; trained the Government of Benin",
-            "IAAP: author, ADS Body of Knowledge &amp; self-paced courses",
+            "IAAP: author, self-paced courses",
             "OZeWAI leadership committee",
             "Founder: A11y-DMV &amp; A11y A11ies Melbourne",
           ],
@@ -103,12 +97,12 @@ export default {
       navLabel: "Instructional Design",
       role: "Instructional Designer &amp; L&amp;D Leader · IAAP Course Author · PMP",
       summary:
-        "L&amp;D leader who designs enterprise training programs end to end: six role-based learning pathways organising 60+ courses, 2,000+ employees trained live (sessions up to 900 people), and communications campaigns reaching 17,000 a year. Author of the IAAP’s ADS Body of Knowledge and many of its self-paced courses. Five communications awards.",
+        "L&amp;D leader who designs enterprise training programs end to end: six role-based learning pathways organising 60+ courses, 2,000+ employees trained live (sessions up to 900 people), and communications campaigns reaching 17,000 a year. Author of many of the IAAP’s self-paced courses. Five communications awards.",
       jobs: [
         {
           heading: "<strong>Training Author</strong> · IAAP · 2023–present",
           bullets: [
-            "Wrote the Accessible Document Specialist (ADS) Body of Knowledge and self-paced courses including Accessible Design, Accessible Development, Accessibility Tester and Digital Accessibility.",
+            "Wrote self-paced courses including Accessible Design, Accessible Development, Accessibility Tester and Digital Accessibility.",
           ],
         },
         {
@@ -301,7 +295,7 @@ export default {
           items: [
             "Internet Society — Outreach Officer, Accessibility SIG",
             "OZeWAI — leadership committee",
-            "IAAP — author, ADS Body of Knowledge",
+            "IAAP — training author, self-paced courses",
             "Gold Quill Blue Ribbon Panelist (IABC)",
             "<span lang=\"es\">Premios del Instituto de Accesibilidad</span>, award panelist",
           ],

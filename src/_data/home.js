@@ -143,13 +143,4 @@ export default {
     "Customer Education Lead",
   ],
 
-  contactTopics: [
-    "Contract work",
-    "Full-time role",
-    "Speaking or training",
-    "Photography",
-    "Subscribe to the blog",
-    "Accessibility feedback",
-    "Something else",
-  ],
 };

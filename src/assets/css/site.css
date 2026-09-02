@@ -623,13 +623,6 @@ textarea.input { min-height: 7rem; resize: vertical; }
   text-indent: -1.267em;
 }
 
-/* — contact form — */
-.contact-form {
-  display: grid;
-  gap: var(--space-6);
-  max-width: 35rem;
-  margin-top: 1.75rem;
-}
 .contact-alt {
   margin: 0;
   font-size: var(--fs-15-5);
@@ -637,49 +630,6 @@ textarea.input { min-height: 7rem; resize: vertical; }
   color: color-mix(in srgb, var(--color-text) 78%, transparent);
 }
 .contact-alt a { text-decoration: underline; overflow-wrap: anywhere; }
-.contact-note {
-  font-size: var(--fs-13);
-  line-height: 1.6;
-  color: color-mix(in srgb, var(--color-text) 64%, transparent);
-  margin: 0;
-}
-/* The no-script explanation, and the status line the script writes into after
-   handing the message to the mail app. Both are notices rather than decoration,
-   so they carry an accent edge and real padding instead of relying on colour. */
-.form-notice,
-.contact-status:not(:empty) {
-  margin: 0;
-  padding: 0.75rem 0.875rem;
-  font-size: var(--fs-14);
-  line-height: 1.6;
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
-  border-left: 3px solid var(--color-accent);
-  border-radius: var(--radius-sm);
-}
-.form-notice a,
-.contact-status a { text-decoration: underline; }
-/* Empty at rest, and taking no space — but always in the DOM, because a live
-   region has to exist before content is put into it to be announced. */
-.contact-status:empty { display: none; }
-
-.field-hint {
-  font-size: var(--fs-12);
-  line-height: 1.5;
-  margin: 0.3125rem 0 0;
-  color: color-mix(in srgb, var(--color-text) 70%, transparent);
-}
-/* Off-screen spam trap. Never focusable, never announced, never visible —
-   but never display:none either, or the bots would skip it too. */
-.honeypot {
-  position: absolute;
-  left: -9999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
 /* — résumé links line — */
 .resume-links {
   margin: var(--lead-3) 0 0;
