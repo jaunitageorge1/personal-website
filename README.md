@@ -115,9 +115,21 @@ The site deploys to **GitHub Pages** from `.github/workflows/deploy.yml`, on
 every push to `main` (or on demand via *Actions → Deploy to GitHub Pages → Run
 workflow*).
 
-One-time setup, which has to be done in the repository settings — it cannot be
-done from the workflow: **Settings → Pages → Build and deployment → Source:
-GitHub Actions**. Until that is set, the deploy job fails at the last step.
+The workflow enables Pages itself (`enablement: true` on
+`actions/configure-pages`), so there is no settings step to remember — with one
+precondition it cannot work around:
+
+**GitHub Pages serves private repositories only on a paid plan.** On GitHub
+Free the repository must be public. While neither is true, the deploy fails at
+the Configure Pages step with *"Get Pages site failed"*, whatever the workflow
+does. Either make the repository public, upgrade the plan, or deploy to Netlify
+instead (below) — Netlify serves private repositories on its free tier.
+
+Note what making the repository public exposes: the site itself renders no
+email address anywhere, but `src/_data/site.js` and `src/_data/resumes.js` hold
+the address and phone numbers in plain text, and a public repo puts them in
+readable source and in the commit history. The anti-harvesting work protects
+the published pages, not the repository.
 
 The workflow builds, runs the whole audit suite, and only uploads if everything
 passes — so a change that breaks the site's WCAG 2.2 AA claim cannot reach the
