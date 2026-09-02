@@ -39,7 +39,7 @@ export default {
     "attorney, trainer and photographer in Melbourne. Contract work in accessibility, " +
     "training, instructional design, writing, AI web development and photography.",
   // Override at build time on the host: URL=https://example.com npm run build
-  url: process.env.URL || process.env.DEPLOY_PRIME_URL || "https://jaunitaflessas.com",
+  url: process.env.URL || process.env.DEPLOY_PRIME_URL || "https://jaunitaflessas.us",
   locale: "en",
 
   csp: {
