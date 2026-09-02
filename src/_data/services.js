@@ -62,8 +62,8 @@ export default {
     {
       num: "06",
       title: "Photography",
-      copy: "Events, portraits, and landscape work from the trail. Galleries are delivered through Picflow: clients proof, select and download in one place, with alt text included on request — because image descriptions are part of the deliverable.",
-      items: ["Events", "Portraits", "Landscape & travel", "Picflow delivery", "Alt text included"],
+      copy: "Events, portraits, and landscape work from the trail. Galleries are delivered through Picflow: clients proof, select and download in one place.",
+      items: ["Events", "Portraits", "Landscape & travel", "Picflow delivery"],
       links: [{ href: "https://jaunitageorge.picflow.com/ao5ce9kqh8", label: "View galleries on Picflow" }],
     },
   ],

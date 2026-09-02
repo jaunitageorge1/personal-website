@@ -23,7 +23,7 @@ static, semantic HTML that works with scripting switched off.
 ```
 src/
   _data/            all copy lives here — edit content without touching markup
-    site.js         identity, outbound links, contact-form backend
+    site.js         identity, outbound links, contact address, CSP
     home.js         hero, stats, values, services, projects, roles, images
     services.js     six practices + the training catalogue
     speaking.js     upcoming, talks, standards, publications
@@ -79,7 +79,7 @@ the Download PDF link 404s in the dev server; run a build to see it work.)
 
 **Blog.** Switched off until there are posts to publish: `blog.js` →
 `enabled: false`. While off, the page is not built and leaves the navigation,
-the sitemap and the contact form's topic list; nothing is deleted. Set it to
+and the sitemap; nothing is deleted. Set it to
 `true` to bring it all back.
 
 **Blog posts.** The six posts in `blog.js` are drafts with placeholder titles, as
@@ -208,15 +208,15 @@ These are flagged in the design handoff and are the owner's calls, not bugs:
   `/<repo>/`. It starts working when a custom domain is attached. Nothing
   depends on it — the one page that should stay unindexed carries its own
   `noindex` tag.
-- **The embedded talk video** on the Speaking page needs its captions confirmed.
-  Embedding it makes them this site's responsibility under WCAG 1.2.2, and that
-  cannot be checked from the build. This is the one criterion the site cannot
-  self-certify — see `docs/accessibility.md`.
+- **The embedded talk video** on the Speaking page plays in the YouTube player
+  and is captioned on YouTube (confirmed September 2026). If the video is ever
+  swapped, confirm the new upload is captioned too — embedding it makes the
+  captions this site's responsibility under WCAG 1.2.2, and that cannot be
+  checked from the build. See `docs/accessibility.md`.
 - **Résumé contact details** are shown on the HTML résumés and printed in full
-  on the PDFs, assembled at runtime like the form's. Set
-  `showDirectContact: false` in `src/_data/resumes.js` to drop them entirely.
-- **Blog subscriptions** currently route to the contact form, as specified,
-  until a newsletter service is chosen.
+  on the PDFs. They live in `src/_data/resumes.js` → `contact`.
+- **Blog subscriptions** currently route to the contact section's email
+  address, until a newsletter service is chosen.
 
 ## Credits
 
