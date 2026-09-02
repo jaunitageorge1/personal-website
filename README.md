@@ -1,4 +1,4 @@
-# jaunitaflessas.us
+# Jaunita Flessas — personal site
 
 Personal portfolio and services site for **Jaunita Flessas** — digital
 accessibility leader, attorney, trainer and photographer — built to win contract
@@ -167,20 +167,22 @@ copied through rather than templated.
 
 ### Custom domain
 
-Nothing in this repository needs to change to serve the site at
-`jaunitaflessas.us`; the build already follows whatever Pages reports. Because
+There is no custom domain at the moment; the site lives at
+`jaunitageorge1.github.io/personal-website/`. Nothing in this repository needs
+to change to serve it at one — the build already follows whatever Pages
+reports. Because
 the site deploys from a workflow, a `CNAME` file in the output is ignored — the
 domain is set in the repository settings instead. Everything below is done at
 the registrar and on GitHub, by the domain's owner:
 
-1. **DNS, at the registrar.** For the apex `jaunitaflessas.us`, four `A`
+1. **DNS, at the registrar.** For the apex domain, four `A`
    records pointing at GitHub Pages: `185.199.108.153`, `185.199.109.153`,
    `185.199.110.153`, `185.199.111.153` (and, optionally, the matching `AAAA`
    records `2606:50c0:8000::153` through `2606:50c0:8003::153`). For `www`, one
    `CNAME` record pointing at `jaunitageorge1.github.io`. Remove any parking
    records the registrar added.
-2. **GitHub → Settings → Pages → Custom domain.** Enter `jaunitaflessas.us`
-   and save. GitHub runs a DNS check; once it passes, tick **Enforce HTTPS**
+2. **GitHub → Settings → Pages → Custom domain.** Enter the domain and
+   save. GitHub runs a DNS check; once it passes, tick **Enforce HTTPS**
    (the certificate can take up to an hour to issue after the DNS check).
 3. **Redeploy** — either push to `main` or run the "Deploy to GitHub Pages"
    workflow by hand. `actions/configure-pages` now reports an empty base path
@@ -189,9 +191,9 @@ the registrar and on GitHub, by the domain's owner:
    The old `jaunitageorge1.github.io/personal-website/` address redirects
    there.
 
-Once the domain is live, `robots.txt` starts to matter (see below), and the
-site's default URL in `site.js` — used only outside CI — already reads
-`https://jaunitaflessas.us`.
+Once the domain is live, `robots.txt` starts to matter (see below). The
+site's default URL in `site.js` is used only outside CI and can be left alone;
+CI passes the real origin in.
 
 ### Security headers
 
