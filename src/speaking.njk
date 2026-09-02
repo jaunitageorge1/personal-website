@@ -38,11 +38,12 @@ navCta:
       {#- Titled, so it is announced as something meaningful when a
           screen-reader user lands on it in the frames list.
 
-          cc_load_policy=1 turns captions on by default. Embedding a video
-          makes its captions this page's responsibility under SC 1.2.2, and
-          that cannot be verified from here — confirm the upload is captioned
-          on YouTube (auto-generated captions do not satisfy 1.2.2).
-          See docs/accessibility.md. -#}
+          cc_load_policy=1 turns the captions on by default. Embedding a video
+          makes its captions this page's responsibility under SC 1.2.2; this
+          upload is captioned on YouTube (confirmed by the owner, September
+          2026). If the video is ever swapped, confirm the new one is too —
+          auto-generated captions do not satisfy 1.2.2. See
+          docs/accessibility.md. -#}
       <iframe src="https://www.youtube-nocookie.com/embed/{{ speaking.featured.videoId }}?cc_load_policy=1"
               title="{{ speaking.featured.videoTitle }}"
               loading="lazy"

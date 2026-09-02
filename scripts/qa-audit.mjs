@@ -375,14 +375,6 @@ const validator = new HtmlValidate({
        sequence shown on screen, and it still needs role="list" for the reason
        above. The rule reads that pairing as "you should have used a <ul>". */
     "prefer-native-element": ["error", { exclude: ["list"] }],
-
-    /* The contact form has no submit button in the static markup on purpose:
-       it opens the reader's own email app, which needs JavaScript, so the
-       button is created by the script. Rendering a dead button for readers
-       without scripting would be worse than rendering none, and a <noscript>
-       block above the fields explains the situation before anyone fills them
-       in. Documented decision; see docs/accessibility.md. */
-    "wcag/h32": "off",
   },
 });
 for (const file of htmlFiles) {

@@ -70,11 +70,9 @@ all links is not. The **spacing** exception is measured properly: a 24px
 circle centred on each undersized target must not intersect another target or
 another undersized target's circle.
 
-Three `html-validate` rules are switched off, each for a stated reason, in
-`scripts/qa-audit.mjs`. `no-redundant-role` and `prefer-native-element` would
-strip the `role="list"` this design needs (see below); `wcag/h32` wants a submit
-button in the static markup, which the contact form deliberately does not have
-(also below).
+Two `html-validate` rules are relaxed, each for a stated reason, in
+`scripts/qa-audit.mjs`: `no-redundant-role` and `prefer-native-element` would
+strip the `role="list"` this design needs (see below).
 
 ### `scripts/verify-live.mjs` (CI only)
 
@@ -218,27 +216,30 @@ removing the site's focus ring still produces 72 findings, so the check has not
 been blinded.
 
 **The manual check this replaces:** tab into the video and confirm the player
-shows a visible focus indicator on its controls. That is part of confirming the
-embed, alongside its captions.
+shows a visible focus indicator on its controls.
 
-## Open item: the embedded talk video
+## The embedded talk video and its captions (1.2.2)
 
-The Speaking page embeds the WebAIM 2025 "Win with Metrics" talk from YouTube.
-Embedding a video makes its captions this page's responsibility under SC 1.2.2
-(Captions, Prerecorded), and that cannot be checked from the build — it depends
-on the upload. The embed now carries `cc_load_policy=1`, which turns captions on
-by default *if the video has them*.
+The Speaking page embeds the WebAIM 2025 "Win with Metrics" talk in the YouTube
+player (the `youtube-nocookie.com` privacy-enhanced embed, which is the same
+player without the tracking cookies). Embedding a video makes its captions this
+page's responsibility under SC 1.2.2 (Captions, Prerecorded), and that cannot
+be checked from the build — it depends on the upload.
 
-**Someone needs to confirm the upload is captioned**, and that the captions are
-human-made or human-corrected — YouTube's auto-generated captions do not satisfy
-1.2.2. If it is not captioned, either caption it or replace the embed with a
-link to the talk, which carries no such obligation. This is the one WCAG 2.2 AA
-criterion the site cannot self-certify.
+**Confirmed captioned.** The owner confirmed in September 2026 that the upload
+carries captions on YouTube. The embed passes `cc_load_policy=1`, so they are
+on by default rather than waiting to be found in the player's menu. The
+"Watch on YouTube" link beside the embed reaches the same captioned video for
+anyone who prefers the full player.
+
+If the video is ever swapped, the new upload needs the same confirmation, and
+the captions must be human-made or human-corrected — YouTube's auto-generated
+captions do not satisfy 1.2.2. A video that cannot be captioned should be
+linked rather than embedded, which carries no such obligation.
 
 SC 1.2.5 (Audio Description) is AA too, but a recorded conference talk whose
-visual content is slides already described in the speech generally satisfies it
-through 1.2.3's audio-description-or-transcript alternative. Worth a look while
-checking the captions.
+visual content is slides already described in the speech satisfies it through
+1.2.3's audio-description-or-transcript alternative.
 
 ## Multiple ways to reach a page (2.4.5)
 
@@ -260,16 +261,15 @@ mechanically checkable rest. Before shipping, a human still needs to:
   keyboard, and that nothing traps focus.
 - **Run a screen reader** — NVDA or JAWS on Windows, VoiceOver on macOS/iOS.
   Check the heading outline reads as a sensible table of contents, that the stat
-  band's number/label pairs read as pairs, and that the form's labels, required
-  states and error messages are announced.
-- **Submit the contact form with an error**, and confirm the browser's own
-  validation message is announced and reachable.
+  band's number/label pairs read as pairs, and that the contact section's
+  email link is announced as a link to that address.
 - **Open a generated PDF in a screen reader** and confirm the tag tree is
   navigable.
 - **Test at 400% zoom in a real browser**, not just an emulated viewport.
 - **Re-check the photograph's alt text** if the image is ever swapped.
-- **Confirm the embedded talk is captioned** — see the open item above.
-- **Send yourself a message through the contact form** from a phone and from a
-  desktop, and confirm the mail app opens with the subject and body intact.
+- **Tab into the embedded video** and confirm the player's controls show a
+  visible focus indicator, and that its captions come on by default.
+- **Follow the contact section's email link** from a phone and from a desktop,
+  and confirm the mail app opens addressed to the right address.
 
 Record the result of that pass here when it is done.
