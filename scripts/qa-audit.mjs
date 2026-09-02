@@ -334,6 +334,14 @@ for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const page = file.replace(/^_site/, "").replace(/index\.html$/, "");
   for (const [, attr, rawTarget] of html.matchAll(/(href|src)="(\/[^"#?]*)"/g)) {
+    /* On a build made for a sub-path, every root-relative URL must carry the
+       prefix. One that does not still resolves here — the file is at the root
+       of _site — but on the live host it points at a different site and 404s.
+       This is what a data-driven src that skipped the `url` filter looks like. */
+    if (PATH_PREFIX && rawTarget !== `/${PATH_PREFIX}` && !rawTarget.startsWith(`/${PATH_PREFIX}/`)) {
+      note(page, "prefix", `${attr}="${rawTarget}" is missing the /${PATH_PREFIX}/ path prefix`);
+      continue;
+    }
     const target = unprefix(rawTarget);
     const candidates = [join("_site", target), join("_site", target, "index.html")];
     if (!candidates.some(existsSync)) note(page, "link", `${attr}="${rawTarget}" does not resolve`);

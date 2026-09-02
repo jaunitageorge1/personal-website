@@ -41,7 +41,7 @@ navCta:
           invented alt text. -#}
       {%- if post.image %}
       <div class="post-cover lighten">
-        <img src="{{ post.image.src }}" alt="{{ post.image.alt }}" loading="lazy" decoding="async">
+        <img src="{{ post.image.src | url }}" alt="{{ post.image.alt }}" loading="lazy" decoding="async">
       </div>
       {%- else %}
       <div class="post-cover post-cover-empty" aria-hidden="true"></div>

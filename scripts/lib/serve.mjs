@@ -59,7 +59,11 @@ export function serve(
     res.writeHead(200, { ...headers, "content-type": TYPES[extname(path)] || "application/octet-stream" });
     res.end(await readFile(path));
   });
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    /* Without this a busy port (a killed run's server still winding down)
+       leaves the promise pending forever, and everything waiting on it hangs
+       with no output at all. Fail loudly instead. */
+    server.once("error", (err) => reject(new Error(`could not listen on 127.0.0.1:${port}: ${err.message}`)));
     server.listen(port, "127.0.0.1", () =>
       resolve({ origin: `http://127.0.0.1:${server.address().port}`, close: () => server.close() })
     );
