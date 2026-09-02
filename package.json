@@ -12,8 +12,8 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:a11y": "node scripts/a11y-audit.mjs",
     "check:qa": "node scripts/qa-audit.mjs",
-    "check:form": "node scripts/contact-form-test.mjs",
-    "check": "npm run build && npm run check:contrast && npm run check:a11y && npm run check:qa && npm run check:form",
+    "check:contact": "node scripts/contact-test.mjs",
+    "check": "npm run build && npm run check:contrast && npm run check:a11y && npm run check:qa && npm run check:contact",
     "build:pages": "eleventy"
   },
   "devDependencies": {

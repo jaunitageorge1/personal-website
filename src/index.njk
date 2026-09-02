@@ -6,7 +6,6 @@ permalink: /
 navCta:
   label: View services
   url: /services/
-extraScripts: ["/assets/js/contact.js"]
 ---
 <div class="wrap">
   <section class="hero" aria-labelledby="hero-h">
@@ -152,90 +151,19 @@ extraScripts: ["/assets/js/contact.js"]
   <section id="contact" class="section-contact" aria-labelledby="contact-h">
     <h2 id="contact-h" class="section-title-sm">Let’s find the work that matters</h2>
     <p class="prose">Contract, fractional or project-based — if it advances access, rights, education or opportunity, I’m interested. Based in Melbourne, working with the US, EU, Canada and Australia.</p>
-    {#- How this sends is set in src/_data/site.js.
-
-        "mailto" (the design's own behaviour) opens the reader's own email app
-        with everything pre-filled. That needs JavaScript, so the Send button
-        is created by the script rather than sitting dead in the HTML, and the
-        <noscript> block below says so before anyone fills the form in.
-
-        No branch ever renders the email address into the markup. -#}
-    {%- if site.form.provider != "none" %}
-    {%- set isMailto = site.form.provider == "mailto" %}
-    <form class="contact-form" id="contact-form" name="contact"
-          {%- if isMailto %} method="post" data-send="mailto"
-          {%- elif site.form.provider == "formspree" %} method="POST" action="{{ site.form.endpoint }}"
-          {%- else %} method="POST" action="{{ site.form.successUrl }}"{% endif %}
-          aria-labelledby="contact-h">
-      {%- if site.form.provider == "netlify" %}
-      <input type="hidden" name="form-name" value="contact">
-      {%- elif site.form.provider == "formspree" %}
-      <input type="hidden" name="_next" value="{{ site.url }}{{ site.form.successUrl }}">
-      <input type="hidden" name="_subject" value="[jaunitaflessas.com] New message">
-      {%- endif %}
-      {%- if isMailto %}
-      {#- Said before the fields, not after, so nobody fills in a form that
-          cannot send. -#}
-      <noscript>
-        <p class="form-notice">This form hands your message to your own email app, which needs JavaScript — and it’s switched off in your browser, so the fields below won’t send. <a href="{{ site.links.linkedin }}">Message me on LinkedIn</a> instead, and I’ll pick it up there.</p>
-      </noscript>
-      {%- endif %}
-      <div class="field">
-        <label for="cf-name">Your name</label>
-        <input id="cf-name" name="name" class="input" type="text" required autocomplete="name">
-      </div>
-      <div class="field">
-        <label for="cf-email">Your email</label>
-        <input id="cf-email" name="email" class="input" type="email" required autocomplete="email">
-      </div>
-      <div class="field">
-        <label for="cf-topic">What’s this about?</label>
-        <select id="cf-topic" name="topic" class="input" required>
-          {%- for topic in home.contactTopics %}
-          {#- No blog, no subscriptions to offer. -#}
-          {%- if topic != "Subscribe to the blog" or blog.enabled %}
-          <option value="{{ topic }}">{{ topic }}</option>
-          {%- endif %}
-          {%- endfor %}
-        </select>
-      </div>
-      <div class="field">
-        <label for="cf-msg">Message</label>
-        <textarea id="cf-msg" name="message" class="input" rows="5" required></textarea>
-      </div>
-      {#- Spam trap. Off-screen, unfocusable and hidden from assistive tech, so
-          only a bot filling every field will trip it. -#}
-      <div class="honeypot" aria-hidden="true">
-        <label for="cf-company">Leave this field empty</label>
-        <input id="cf-company" name="company" type="text" tabindex="-1" autocomplete="off">
-      </div>
-      {#- The Send button is inserted here by contact.js. LinkedIn is a plain
-          link and is always available, script or no script. -#}
-      <div class="btn-row contact-actions">
-        <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
-      </div>
-      {#- The address itself, in plain text with a mailto link, always visible
-          and independent of scripting. Handing off to a mail app only works
-          on a device that has one configured; this is the route for everyone
-          else, and it is copyable into webmail. The owner has chosen to
-          publish the address — it is already public. -#}
-      <p class="contact-alt">Or write to me directly: <a href="mailto:{{ site.form.mailto.user }}@{{ site.form.mailto.domain }}">{{ site.form.mailto.user }}@{{ site.form.mailto.domain }}</a></p>
-      {#- Empty at load, and present at load: a live region has to already be in
-          the page for what gets put into it to be announced. -#}
-      <p class="contact-status" id="contact-status" role="status"></p>
-      {#- For the mailto form this starts hidden and is revealed by the script,
-          because it describes what pressing Send does — and without scripting
-          there is no Send. The <noscript> block above covers that case. -#}
-      <p class="contact-note" id="contact-note"{% if isMailto %} hidden{% endif %}>
-        {%- if isMailto %}Sending opens your own email app with everything pre-filled — nothing is submitted to this site.
-        {%- else %}Everything here reaches me directly. I read it all myself.{% endif %}
-      </p>
-    </form>
-    {%- endif %}
+    {#- No form: a static host has nowhere to send one, and a mailto handoff
+        only works on a device with a mail app configured. The address itself,
+        as text with a mailto link, works for everyone — it can be copied into
+        webmail — and needs no scripting. -#}
+    <p class="contact-alt">Email me at <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a> — tell me what you’re building and who it’s for, and I’ll tell you honestly whether I’m the right fit.</p>
+    <div class="btn-row">
+      <a href="mailto:{{ site.contact.email }}" class="btn btn-primary">Email me</a>
+      <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
+    </div>
   </section>
 
   <section class="section-a11y" aria-labelledby="a11y-h">
     <h2 id="a11y-h" class="card-title">Accessibility statement</h2>
-    <p class="prose prose-wide">This site is built to WCAG 2.2 AA: semantic structure, full keyboard operability, visible focus, alt text on images and no motion that can’t be paused. If you hit a barrier anywhere, <a href="#contact">tell me through the contact form</a> — I’ll fix it and credit you.</p>
+    <p class="prose prose-wide">This site is built to WCAG 2.2 AA: semantic structure, full keyboard operability, visible focus, alt text on images and no motion that can’t be paused. If you hit a barrier anywhere, <a href="mailto:{{ site.contact.email }}">email me</a> — I’ll fix it and credit you.</p>
   </section>
 </div>

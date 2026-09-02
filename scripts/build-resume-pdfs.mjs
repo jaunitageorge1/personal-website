@@ -73,22 +73,12 @@ const run = async () => {
     /* Fonts must be in before layout is measured, or the pagination shifts. */
     await page.evaluate(() => document.fonts.ready);
 
-    /* The contact details are injected by /assets/js/contact.js rather than
-       written into the markup, so that no served file carries the address as
-       literal text. That makes the PDF depend on the script having run — fail
-       loudly rather than shipping a résumé nobody can reply to. */
-    if (resumes.contact.showDirectContact) {
-      const filled = await page.evaluate(
-        () => document.getElementById("direct-contact")?.querySelector("a[href^='mailto:']") !== undefined &&
-              document.getElementById("direct-contact")?.textContent.trim().length > 0
-      );
-      if (!filled) {
-        throw new Error(
-          `${cv.slug}: contact details were not injected — /assets/js/contact.js did not run. ` +
-          `The PDF would have shipped without an email address.`
-        );
-      }
-    }
+    /* A résumé nobody can reply to must not ship: the contact line is plain
+       markup now, but the assertion stays. */
+    const hasEmail = await page.evaluate(
+      () => !!document.querySelector(".doc-contact a[href^='mailto:']")
+    );
+    if (!hasEmail) throw new Error(`${cv.slug}: no mailto link in the contact line`);
     await page.emulateMedia({ media: "print" });
     const path = `${OUT}/jaunita-flessas-${cv.slug}.pdf`;
     await page.pdf({

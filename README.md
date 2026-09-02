@@ -16,9 +16,8 @@ checked by hand, and where the design system was deliberately overruled.
 ## Stack
 
 [Eleventy](https://www.11ty.dev) with Nunjucks templates. Plain CSS, no build
-step for styles, no framework, and **two small scripts**: one opens the reader's
-email app from the contact form and fills in the résumés' contact line, the
-other adds a Print button beside the résumé PDF links. Everything else is
+step for styles, no framework, and **one small script**: a single 14-line file that
+adds a Print button beside the résumé PDF links. Everything else is
 static, semantic HTML that works with scripting switched off.
 
 ```
@@ -33,7 +32,6 @@ src/
   _includes/
     layouts/        base (head), page (site shell), resume (document shell)
     partials/       nav, footer
-  contact-script.njk  generates /assets/js/contact.js with the address encoded
   assets/
     css/            tokens.css (design tokens) · site.css · resume.css
     fonts/          Inter, self-hosted — SIL OFL 1.1, licence included
@@ -43,7 +41,7 @@ scripts/
   check-contrast.mjs    measures 52 colour pairs against WCAG thresholds
   a11y-audit.mjs        axe-core + reflow, zoom, text-resize and landmark checks
   qa-audit.mjs          keyboard, target size, text spacing, links, HTML validity
-  contact-form-test.mjs contact form behaviour, with and without JavaScript
+  contact-test.mjs      the email route, with JavaScript switched off
   verify-live.mjs       the deployed site at its real URL, run by CI after deploy
   build-resume-pdfs.mjs renders each résumé page to a tagged PDF, into _site/
 docs/accessibility.md
@@ -60,7 +58,7 @@ npm run check          # build, then all four audits below
 npm run check:contrast # 52 colour pairs measured against WCAG thresholds
 npm run check:a11y     # axe-core, reflow at 320px and 400% zoom, text at 200%
 npm run check:qa       # keyboard, target size, text spacing, links, HTML validity
-npm run check:form     # contact form behaviour, with and without JavaScript
+npm run check:contact  # the email route, with JavaScript switched off
 npm run resumes:pdf    # re-render just the PDFs (part of `build`; needs Chromium)
 ```
 
@@ -90,29 +88,14 @@ real photograph; without one the card shows a decorative panel and no image is
 announced to screen readers. Write real alt text — the panel is deliberately not
 a fallback for a missing description.
 
-**Contact form.** On submit it opens the sender's own email app with the message
-pre-filled — subject `[Site] <topic> — <name>`, their name and address signed
-into the body. No backend, nothing posted to the site.
-
-The address is also shown in plain text beside the form, as a mailto link — the
-owner's choice, since it is already public. That is the route for anyone on a
-device with no email app configured, which is common on desktops: they can copy
-it into webmail. The résumé pages still assemble their contact line at runtime
-from `/assets/js/contact.js`, which `npm run check:form` asserts.
-
-Change your address, or the subject prefix, in `site.js` → `form.mailto`.
-
-Other backends, via `site.js` → `form.provider`:
-
-- `"mailto"` (default) — the above.
-- `"netlify"` — Netlify Forms handles the POST and the honeypot server-side.
-- `"formspree"` — set `form.endpoint` to your form URL.
-- `"none"` — no form; the contact section falls back to LinkedIn.
-
-The last three work with JavaScript switched off; `mailto` cannot, since opening
-a mail app requires it. In that case the Send button is not rendered at all and
-a note above the fields says so, rather than offering a button that does
-nothing.
+**Contact.** There is no form. A static host has nowhere to send one, and a
+`mailto:` handoff only works on a device with a mail app configured, so the
+route in is the address itself: plain text with a mailto link, on the home
+page and on every résumé, working with JavaScript off. Change it in `site.js`
+→ `contact.email` (and `resumes.js` → `contact` for the résumés' phone
+numbers). If a real form is wanted later, a service such as Formspree or
+FormSubmit receives the POST and emails it on — the section is the natural
+place for it.
 
 ## Deploying
 

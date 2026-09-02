@@ -84,11 +84,9 @@ blocked — the embedded video and the Picflow photograph — and confirms every
 page, link, asset and PDF is actually served under the deployed path. The
 build-time audits cannot see any of that.
 
-### `npm run check:form`
+### `npm run check:contact`
 
-Twenty behavioural assertions on the contact form in a real browser — the one
-interactive thing on the site, and the one piece that depends on JavaScript.
-See "The contact form" below.
+The contact route, with JavaScript switched off — see "Contact" below.
 
 ## Deliberate departures from the design system
 
@@ -187,58 +185,17 @@ switches pronunciation instead of reading them as English.
 **Forced colors.** A `forced-colors` block keeps the focus ring, card edges and
 button borders visible once Windows High Contrast replaces the palette.
 
-## The contact form
+## Contact
 
-The form does what the design handoff's prototype does: on submit it opens the
-reader's own email app with the message pre-filled, addressed to Jaunita, with
-the subject `[Site] <topic> — <name>` and the sender's name and address signed
-into the body. There is no backend and nothing is posted to the site.
-
-**The address is published, on purpose.** Beside the form, in plain text with
-a `mailto:` link. Handing a message to a mail app only works on a device that
-has one configured, which many desktops do not; for everyone else the visible,
-copyable address is the route in, and it needs no scripting. The owner chose
-this — the address is already public — so the earlier goal of keeping it out
-of the served markup no longer applies to the contact section. The résumé
-pages still assemble their contact line at runtime from
-`/assets/js/contact.js`, and the generated PDFs carry the details in full
-because headless Chromium runs the script; `resumes:pdf` fails loudly if it
-ever does not.
-
-**No dead controls.** The Send button does not exist in the static HTML. It is
-created by the script, so a reader without JavaScript is never shown a button
-that cannot work. In its place a `<noscript>` block sits *above* the fields —
-not below them — saying plainly that the form will not send and offering
-LinkedIn instead, before anyone invests effort filling it in. The note
-explaining what Send does is `hidden` until the script reveals it, since without
-a Send button it would be describing something that is not there.
-
-This is why `html-validate`'s `wcag/h32` rule is switched off. The rule wants a
-submit button in the markup; rendering a dead one would be worse than rendering
-none.
-
-**Handing off is invisible, so it is announced.** Setting `location.href` to a
-`mailto:` changes nothing on screen, and on a device with no mail app configured
-nothing happens at all. Without feedback a screen-reader user could not tell
-"sent" from "silently broken". A `role="status"` region — present but empty at
-load, because a live region must exist before content is put into it — is filled
-in on submit with what just happened and a real fallback link carrying the same
-message. Its text is not the address, so the address only reaches the DOM after
-someone has deliberately pressed Send.
-
-**Validation** is the browser's own: `required` on name, email and message, and
-`type="email"` on the address. The submit handler is only reached once the form
-is valid, so an incomplete submit is blocked by the user agent and focus moves
-to the first bad field. `autocomplete="name"` and `autocomplete="email"` let a
-browser fill the fields from the reader's own profile (1.3.5).
-
-**The honeypot** is a `company` field parked off-screen, `tabindex="-1"` and
-inside `aria-hidden="true"`, so no human and no screen reader ever meets it.
-Anything in it aborts the send silently, leaving no status trace.
-
-Switching `form.provider` in `src/_data/site.js` to `netlify` or `formspree`
-swaps in a real backend that works with scripting switched off; the script then
-does nothing. Neither option renders the address either.
+There is no contact form. The route in is the email address, as text with a
+`mailto:` link on the home page and on every résumé — visible, copyable into
+webmail, and needing no scripting. A form was tried first, handing off to the
+visitor's mail app; on a desktop with no mail app configured that visibly does
+nothing, which is worse than an address. `check:contact` runs with JavaScript
+switched off and asserts the link is present, correct, visible and copyable,
+that every résumé's contact line is plain markup with working `mailto:` and
+`tel:` links, and that nothing of the old form or its script survives in the
+build.
 
 ## The embedded video and keyboard focus
 

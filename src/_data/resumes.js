@@ -8,12 +8,6 @@
  * HTML (a <strong>, an <em>, a lang-tagged span) and are rendered unescaped.
  */
 const contact = {
-  /* The site itself exposes no email address anywhere — the contact form is
-     the only route in. A résumé is the one exception: it is a document sent to
-     recruiters, and one without contact details does not do its job. Set this
-     to false to drop the address and phone numbers from the public HTML
-     résumés and their PDFs, leaving the site's contact form as the only route. */
-  showDirectContact: true,
   location: "Melbourne, AU (US citizen, full AU working rights)",
   email: "jaunitaflessas@gmail.com",
   phones: ["+61 457 037 690", "+1 253 271 2167"],
