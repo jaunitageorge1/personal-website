@@ -98,13 +98,16 @@ eleventyExcludeFromCollections: true
        The fallback link carries the same message, so a second click still
        works; its text is not the address, so the address only reaches the DOM
        after someone has deliberately pressed Send. */
+    /* The link keeps the full mailto — subject and body included — so a second
+       click retries the whole handoff; its visible text is the address itself,
+       so someone with no mail app can copy it into webmail. */
     var direct = document.createElement("a");
     direct.href = url;
-    direct.textContent = "open your email app directly";
+    direct.textContent = decode(EMAIL);
 
-    status.textContent = "Opening your email app with the message pre-filled. If nothing happened, ";
+    status.textContent = "Opening your email app with the message pre-filled. If nothing happened, this device has no email app set up — copy your message and send it to ";
     status.appendChild(direct);
-    status.appendChild(document.createTextNode(" — or message me on LinkedIn."));
+    status.appendChild(document.createTextNode(" from wherever you read email, or message me on LinkedIn."));
 
     window.location.href = url;
   });

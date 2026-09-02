@@ -4,7 +4,10 @@
 <nav class="nav" aria-label="Main">
   <span class="nav-brand">{{ site.name }}</span>
   {%- for item in site.nav %}
+  {#- The blog leaves the navigation while it is switched off in blog.js. -#}
+  {%- if item.url != "/blog/" or blog.enabled %}
   <a href="{{ item.url | url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.label }}</a>
+  {%- endif %}
   {%- endfor %}
   <a href="{{ navCta.url | url }}" class="btn btn-primary">{{ navCta.label }}</a>
 </nav>

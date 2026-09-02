@@ -194,20 +194,16 @@ reader's own email app with the message pre-filled, addressed to Jaunita, with
 the subject `[Site] <topic> — <name>` and the sender's name and address signed
 into the body. There is no backend and nothing is posted to the site.
 
-**The address is in no file the site serves.** It is base64-encoded at build
-time into `/assets/js/contact.js` and assembled at runtime. The same treatment
-is applied to the résumés' contact line, which is filled in by the same script
-rather than written into the markup — so the site serves no HTML, CSS, JS or XML
-containing the address or the phone numbers as literal text. `check:form`
-asserts this over every built file, so a future edit cannot quietly reintroduce
-it.
-
-Be clear-eyed about what that buys: it stops address-harvesting crawlers, which
-read markup and do not run scripts. It is not secrecy. Anyone who opens the
-console can read the address. That is the accepted trade for a form with no
-backend. The generated PDFs carry the details in full, because headless Chromium
-runs the script — and `resumes:pdf` fails loudly if it ever does not, rather
-than shipping a résumé nobody can reply to.
+**The address is published, on purpose.** Beside the form, in plain text with
+a `mailto:` link. Handing a message to a mail app only works on a device that
+has one configured, which many desktops do not; for everyone else the visible,
+copyable address is the route in, and it needs no scripting. The owner chose
+this — the address is already public — so the earlier goal of keeping it out
+of the served markup no longer applies to the contact section. The résumé
+pages still assemble their contact line at runtime from
+`/assets/js/contact.js`, and the generated PDFs carry the details in full
+because headless Chromium runs the script; `resumes:pdf` fails loudly if it
+ever does not.
 
 **No dead controls.** The Send button does not exist in the static HTML. It is
 created by the script, so a reader without JavaScript is never shown a button

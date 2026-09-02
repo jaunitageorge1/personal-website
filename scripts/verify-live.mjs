@@ -1,7 +1,7 @@
 /**
  * Verify a deployed copy of the site, at its real URL.
  *
- *   node scripts/verify-live.mjs https://example.github.io/personalwebsite/
+ *   node scripts/verify-live.mjs https://example.github.io/personal-website/
  *
  * The build-time audits prove the *build* is right. This proves the *deploy*
  * is: that the host serves every page the sitemap lists, that every

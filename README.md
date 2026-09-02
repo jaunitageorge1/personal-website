@@ -79,6 +79,11 @@ generated from the résumé pages by `npm run build`, not committed, so they
 cannot fall out of step with the HTML. (`npm run dev` does not render them, so
 the Download PDF link 404s in the dev server; run a build to see it work.)
 
+**Blog.** Switched off until there are posts to publish: `blog.js` →
+`enabled: false`. While off, the page is not built and leaves the navigation,
+the sitemap and the contact form's topic list; nothing is deleted. Set it to
+`true` to bring it all back.
+
 **Blog posts.** The six posts in `blog.js` are drafts with placeholder titles, as
 the design specifies. Adding `image: { src, alt }` to a post gives its card a
 real photograph; without one the card shows a decorative panel and no image is
@@ -89,12 +94,11 @@ a fallback for a missing description.
 pre-filled — subject `[Site] <topic> — <name>`, their name and address signed
 into the body. No backend, nothing posted to the site.
 
-Your address is in **no file the site serves**: it is base64-encoded at build
-time into `/assets/js/contact.js` and assembled at runtime, and the résumés'
-contact line is filled in by the same script. `npm run check:form` asserts that
-over every built file, so a later edit cannot quietly put it back. That stops
-address-harvesting crawlers, which read markup and do not run scripts — it is
-not secrecy, and anyone who opens the console can read it.
+The address is also shown in plain text beside the form, as a mailto link — the
+owner's choice, since it is already public. That is the route for anyone on a
+device with no email app configured, which is common on desktops: they can copy
+it into webmail. The résumé pages still assemble their contact line at runtime
+from `/assets/js/contact.js`, which `npm run check:form` asserts.
 
 Change your address, or the subject prefix, in `site.js` → `form.mailto`.
 
@@ -158,7 +162,7 @@ A failure there cannot undo a deploy; it makes the run red so the problem is
 seen rather than found by a visitor. Run it by hand against any deployed copy:
 
 ```bash
-node scripts/verify-live.mjs https://jaunitageorge1.github.io/personalwebsite/
+node scripts/verify-live.mjs https://jaunitageorge1.github.io/personal-website/
 ```
 
 ### The path prefix

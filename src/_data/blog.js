@@ -1,5 +1,11 @@
 /** Blog page. Posts are drafts: titles and blurbs are placeholders. */
 export default {
+  /* Off until there are posts to publish. While false the page is not built,
+     it leaves the navigation and the sitemap, and the "Subscribe to the blog"
+     topic drops out of the contact form. Everything below is kept as-is; set
+     this to true to bring it all back. */
+  enabled: false,
+
   intro:
     "Notes from the rest of my life: trails hiked, languages half-learned, meals " +
     "over-ambitious, kilometres logged and places that changed my mind. Occasionally " +
