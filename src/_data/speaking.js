@@ -60,11 +60,19 @@ export default {
     },
     {
       title: "IAAP",
-      body: "Training author; wrote the Accessible Document Specialist (ADS) Body of Knowledge and many of IAAP’s self-paced courses.",
+      body: "Training author; wrote many of IAAP’s self-paced courses, including Accessible Design, Accessible Development, Accessibility Tester and Digital Accessibility.",
     },
     {
-      title: "globa11y &amp; meetups",
-      body: "Director of <a href=\"https://accessiblecommunity.org/globa11y/\">globa11y</a>, training and employing disabled technologists; founder of A11y-DMV and A11y A11ies Melbourne; OZeWAI leadership committee.",
+      title: "globa11y",
+      body: "Director of <a href=\"https://accessiblecommunity.org/globa11y/\">globa11y</a>, a social enterprise training and employing disabled technologists across the Global South.",
+    },
+    {
+      title: "Meetups",
+      body: "Founder of A11y-DMV, the DC metro region’s largest accessibility meetup, and of its Melbourne sibling, A11y A11ies.",
+    },
+    {
+      title: "OZeWAI",
+      body: "Leadership committee of Australia’s web accessibility initiative; moderator of its Ask the Professionals panel series.",
     },
   ],
 

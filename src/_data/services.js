@@ -27,7 +27,7 @@ export default {
     {
       num: "03",
       title: "Instructional design",
-      copy: "Enterprise training programs end to end, not one-off decks: six role-based learning pathways organising 60+ courses and webinars for designers, developers, content creators and leadership; many of the IAAP’s self-paced courses written by me, including Accessible Design, Accessible Development, Accessibility Tester and Digital Accessibility; federal training supporting the MISSION Act; and the ADS Body of Knowledge. LMS-ready, accessible by default.",
+      copy: "Enterprise training programs end to end, not one-off decks: six role-based learning pathways organising 60+ courses and webinars for designers, developers, content creators and leadership; many of the IAAP’s self-paced courses written by me, including Accessible Design, Accessible Development, Accessibility Tester and Digital Accessibility; and federal training supporting the MISSION Act. LMS-ready, accessible by default.",
       items: [
         "Enterprise program design", "Role-based pathways", "eLearning development",
         "LMS integration", "Accessible courseware", "IAAP course author",
@@ -72,7 +72,7 @@ export default {
     accessibility: [
       "Accessible web & mobile development (WCAG 2.2, ARIA)",
       "Accessible design & content authoring",
-      "Accessible documents (ADS body-of-knowledge author)",
+      "Accessible documents (ADS-certified)",
       "Accessibility metrics: tracking & showing program value",
       "Vendor monitoring & accessible procurement",
       "Building role-based accessibility training programs",
