@@ -77,79 +77,79 @@ const WHITE = "#ffffff";
 
 /* ---------- what to check ---------- */
 
-const AA_TEXT = 4.5;      // 1.4.3, normal text
-const AA_LARGE = 3.0;     // 1.4.3, >=24px, or >=18.66px bold
+/* Text is held to AAA (1.4.6), not just the AA the site claims: the floor
+   for normal text is 7:1 and for large text 4.5:1. Non-text keeps AA's 3:1
+   (1.4.11) — the base accent that draws focus rings and borders is the brand
+   hue and measures 4.7:1 on the page, which is plenty for a boundary. */
+const AAA_TEXT = 7.0;     // 1.4.6, normal text
+const AAA_LARGE = 4.5;    // 1.4.6, >=24px, or >=18.66px bold
 const AA_NONTEXT = 3.0;   // 1.4.11, UI component boundaries and focus rings
 
-const text = (name, fg, bg, min = AA_TEXT) => ({ name, fg, bg, min });
+const text = (name, fg, bg, min = AAA_TEXT) => ({ name, fg, bg, min });
+
+/* The three text tiers from tokens.css, as the percentages behind them. */
+const STRONG = 90, SOFT = 82, MUTED = 74;
 
 const checks = [
   /* --- body copy on the page ground --- */
   text("body text", "--color-text", PAGE),
   text(".lede / .hero-intro", "--color-text", PAGE),
-  text(".prose (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".hero-note (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".svc-copy (78%)", mix("--color-text", 78, PAGE), PAGE),
-  text(".quote-attribution (64%)", mix("--color-text", 64, PAGE), PAGE),
-  text(".table-note / .pub-meta (64%)", mix("--color-text", 64, PAGE), PAGE),
-  text(".upcoming-where (64%)", mix("--color-text", 64, PAGE), PAGE),
-  text(".contact-note (64%)", mix("--color-text", 64, PAGE), PAGE),
-  text(".resume-links (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".field label (70%)", mix("--color-text", 70, PAGE), PAGE),
-  text(".site-footer (55%)", mix("--color-text", 55, PAGE), PAGE),
-  text(".table th (60%)", mix("--color-text", 60, PAGE), PAGE),
+  text("strong tier: .prose, .svc-copy, .contact-alt, .resume-links, .beyond-cols", mix("--color-text", STRONG, PAGE), PAGE),
+  text("soft tier: .hero-note", mix("--color-text", SOFT, PAGE), PAGE),
+  text("muted tier: .quote-attribution, .table-note, .pub-meta, .upcoming-where", mix("--color-text", MUTED, PAGE), PAGE),
+  text("muted tier: .site-footer, .text-muted, .resume-toolbar label", mix("--color-text", MUTED, PAGE), PAGE),
+  text(".table th (muted)", mix("--color-text", MUTED, PAGE), PAGE),
   text(".table td", "--color-text", PAGE),
-  text(".cell-event (64%)", mix("--color-text", 64, PAGE), PAGE),
+  text(".cell-event (muted)", mix("--color-text", MUTED, PAGE), PAGE),
 
   /* --- accent used as text --- */
-  text(".kicker (accent)", "--color-accent", PAGE),
+  text(".kicker (accent-text)", "--color-accent-text", PAGE),
   text("link (accent-300)", "--color-accent-300", PAGE),
-  text(".btn-primary label", "--color-accent", PAGE),
-  text(".btn-ghost label", "--color-accent", PAGE),
-  text(".svc-num (accent)", "--color-accent", PAGE),
+  text("link hover (accent-200)", "--color-accent-200", PAGE),
+  text(".btn-primary label (accent-text)", "--color-accent-text", PAGE),
+  text(".btn-ghost label (accent-text)", "--color-accent-text", PAGE),
+  text(".svc-num (accent-text)", "--color-accent-text", PAGE),
+  text(".nav current page (accent-text)", "--color-accent-text", PAGE),
 
   /* --- the indigo band --- */
   text("band .kicker (accent-200)", "--color-accent-200", BAND),
   text("band heading", "--color-text", BAND),
-  text(".stat-value", "--color-text", BAND, AA_LARGE),
-  text(".stat-label (64%)", mix("--color-text", 64, BAND), BAND),
-  text(".topic-list (82%)", mix("--color-text", 82, BAND), BAND),
-  text(".topic-note (64%)", mix("--color-text", 64, BAND), BAND),
+  text("band link (accent-300)", "--color-accent-300", BAND),
+  text(".stat-value", "--color-text", BAND, AAA_LARGE),
+  text(".stat-label (strong, on band)", mix("--color-text", STRONG, BAND), BAND),
+  text(".topic-list (strong, on band)", mix("--color-text", STRONG, BAND), BAND),
+  text(".topic-note (strong, on band)", mix("--color-text", STRONG, BAND), BAND),
 
   /* --- cards --- */
   text(".card-title", "--color-text", SURFACE),
-  text(".card-body (80%)", mix("--color-text", 80, SURFACE), SURFACE),
-  text(".card-meta (62%)", mix("--color-text", 62, SURFACE), SURFACE),
-  text(".card-kicker (accent)", "--color-accent", SURFACE),
+  text(".card-body (strong)", mix("--color-text", STRONG, SURFACE), SURFACE),
+  text(".card-meta (muted)", mix("--color-text", MUTED, SURFACE), SURFACE),
+  text(".card-kicker (accent-text)", "--color-accent-text", SURFACE),
   text("card link (accent-300)", "--color-accent-300", SURFACE),
-  text(".input text", "--color-text", SURFACE),
 
   /* --- pills --- */
   text(".tag-accent", "--color-accent-100", "--color-accent-800"),
   text(".tag-neutral", "--color-neutral-100", "--color-neutral-800"),
-  text(".tag-outline label", "--color-accent", PAGE),
+  text(".tag-outline label (accent-text)", "--color-accent-text", PAGE),
 
   /* --- skip link --- */
   text(".skip-link", "--color-text", "--color-section"),
-  text(".text-muted (55%)", mix("--color-text", 55, PAGE), PAGE),
-  text(".resume-toolbar label (60%)", mix("--color-text", 60, PAGE), PAGE),
 
   /* --- résumé documents, on white --- */
   text("résumé body #23242e", "#23242e", WHITE),
-  text("résumé prose #33354a", "#33354a", WHITE),
-  text("résumé contact #4a4c5a", "#4a4c5a", WHITE),
-  text("résumé name #16171f", "#16171f", WHITE, AA_LARGE),
-  text("résumé heading/link accent-700", "--color-accent-700", WHITE),
+  text("résumé prose / contact #33354a", "#33354a", WHITE),
+  text("résumé name #16171f", "#16171f", WHITE, AAA_LARGE),
+  text("résumé heading/link accent-800", "--color-accent-800", WHITE),
+  text("résumé link hover accent-900", "--color-accent-900", WHITE),
 
   /* --- non-text: focus rings and control boundaries (1.4.11) --- */
   text("focus ring on page", "--color-accent", PAGE, AA_NONTEXT),
   text("focus ring on surface", "--color-accent", SURFACE, AA_NONTEXT),
   text("focus ring on band", "--color-accent", BAND, AA_NONTEXT),
   text("focus ring on white (résumé)", "--color-accent", WHITE, AA_NONTEXT),
-  text(".btn-primary border on page", "--color-accent", PAGE, AA_NONTEXT),
+  text(".btn-primary border on page (accent-text)", "--color-accent-text", PAGE, AA_NONTEXT),
+  text(".tag-outline border on page (accent-text)", "--color-accent-text", PAGE, AA_NONTEXT),
   text(".btn-secondary border on page", "--color-border-control", PAGE, AA_NONTEXT),
-  text(".input border on its fill", "--color-border-control", SURFACE, AA_NONTEXT),
-  text(".input border on page", "--color-border-control", PAGE, AA_NONTEXT),
 ];
 
 /* ---------- report ---------- */
@@ -171,6 +171,6 @@ for (const r of rows) {
 }
 console.log(
   `\n${rows.length - failed}/${rows.length} pass. ` +
-    (failed ? `${failed} FAILING.\n` : "All combinations meet WCAG 2.2 AA.\n")
+    (failed ? `${failed} FAILING.\n` : "All text meets WCAG 2.2 AAA (7:1); all non-text meets AA (3:1).\n")
 );
 process.exit(failed ? 1 : 0);

@@ -33,9 +33,10 @@ runs offline.
 
 Reads the real token values out of `tokens.css`, composites every
 `color-mix(… N%, transparent)` foreground over the ground it actually sits on,
-and measures the WCAG contrast ratio for 49 combinations — body copy, muted
+and measures the WCAG contrast ratio for 44 combinations — body copy, muted
 text, accent text, pills, the résumé's ink on white, focus rings and control
-boundaries.
+boundaries. Text is held to **AAA (1.4.6, 7:1)**, not the AA the site claims;
+non-text keeps AA's 3:1. See "Text contrast" below.
 
 Where a ground is a gradient, the ratio is measured against the gradient's
 **lightest point**, not the flat colour underneath it, because that is the worst
@@ -86,14 +87,48 @@ build-time audits cannot see any of that.
 
 The contact route, with JavaScript switched off — see "Contact" below.
 
+## Text contrast: AAA, not AA
+
+The handoff dims secondary copy by painting the text colour at reduced opacity —
+seven different percentages, from 55% (the footer, 4.8:1) to 82%. All of them
+met AA's 4.5:1, and the owner asked for more. Every text colour on the site now
+clears **7:1**, the AAA floor of 1.4.6, and the contrast audit enforces that
+floor rather than AA's.
+
+Three tiers in `tokens.css` replace the ad-hoc percentages:
+
+| tier | opacity | on the page | on a card | on the indigo band |
+| --- | --- | --- | --- | --- |
+| `--text-strong` | 90% | 10.4:1 | 10.4:1 | 7.7:1 |
+| `--text-soft` | 82% | 8.9:1 | 8.9:1 | — |
+| `--text-muted` | 74% | 7.5:1 | 7.5:1 | — |
+
+The band is lighter than the page, so only the strong tier clears 7:1 there;
+the stat labels and the training-topic lists on it use strong alone.
+
+The accent needed the same treatment. `--color-accent` is the brand blurple and
+measures 4.7:1 on the page — fine for AA text and more than enough for a focus
+ring or a border, which is what it still draws. As *text* (kickers, button
+labels, the numbered services, the current-page nav link, outline pills) the
+site uses `--color-accent-text`, one stop up the ramp, at 7.4:1. Links were
+already `--color-accent-300` at 10.1:1.
+
+The résumés got the same pass on white: headings and links moved from
+`--color-accent-700` (6.8:1) to `-800` (10.3:1), and the contact line from
+8.5:1 to 12:1. The PDFs are rendered from the same stylesheet, so they follow.
+
+What did not change: the focus ring (4.7:1 on the page, 3.4:1 on the band)
+stays the base accent, because 1.4.11 asks 3:1 of a boundary and the truer hue
+is worth keeping there.
+
 ## Deliberate departures from the design system
 
 Two values in `_ds/styles.css` do not meet the standard the site claims. Both
 were changed, and both changes are small enough to preserve the look.
 
-**`.card-meta` — 50% → 62% of the text colour.**
+**`.card-meta` — 50% of the text colour → the muted tier.**
 At 50% over `--color-surface` it measures **4.25:1**, below the 4.5:1 that 1.4.3
-requires of normal text. At 62% it measures 5.76:1. Used by the blog cards'
+requires of normal text; the muted tier measures 7.5:1. Used by the blog cards'
 read-time line.
 
 **Control boundaries — `--color-divider` → `--color-border-control`.**

@@ -1,4 +1,4 @@
-# jaunitaflessas.com
+# jaunitaflessas.us
 
 Personal portfolio and services site for **Jaunita Flessas** — digital
 accessibility leader, attorney, trainer and photographer — built to win contract
@@ -38,7 +38,7 @@ src/
     images/         headshot
   *.njk             the pages
 scripts/
-  check-contrast.mjs    measures 52 colour pairs against WCAG thresholds
+  check-contrast.mjs    measures 44 colour pairs; text to AAA, non-text to AA
   a11y-audit.mjs        axe-core + reflow, zoom, text-resize and landmark checks
   qa-audit.mjs          keyboard, target size, text spacing, links, HTML validity
   contact-test.mjs      the email route, with JavaScript switched off
@@ -55,7 +55,7 @@ npm install
 npm run dev            # local server with live reload
 npm run build          # build to _site/, including the résumé PDFs
 npm run check          # build, then all four audits below
-npm run check:contrast # 52 colour pairs measured against WCAG thresholds
+npm run check:contrast # 44 colour pairs; text held to AAA (7:1), non-text to AA
 npm run check:a11y     # axe-core, reflow at 320px and 400% zoom, text at 200%
 npm run check:qa       # keyboard, target size, text spacing, links, HTML validity
 npm run check:contact  # the email route, with JavaScript switched off
@@ -164,6 +164,34 @@ is caught rather than discovered live.
 
 Fonts are referenced from the stylesheet relatively (`../fonts/…`), since CSS is
 copied through rather than templated.
+
+### Custom domain
+
+Nothing in this repository needs to change to serve the site at
+`jaunitaflessas.us`; the build already follows whatever Pages reports. Because
+the site deploys from a workflow, a `CNAME` file in the output is ignored — the
+domain is set in the repository settings instead. Everything below is done at
+the registrar and on GitHub, by the domain's owner:
+
+1. **DNS, at the registrar.** For the apex `jaunitaflessas.us`, four `A`
+   records pointing at GitHub Pages: `185.199.108.153`, `185.199.109.153`,
+   `185.199.110.153`, `185.199.111.153` (and, optionally, the matching `AAAA`
+   records `2606:50c0:8000::153` through `2606:50c0:8003::153`). For `www`, one
+   `CNAME` record pointing at `jaunitageorge1.github.io`. Remove any parking
+   records the registrar added.
+2. **GitHub → Settings → Pages → Custom domain.** Enter `jaunitaflessas.us`
+   and save. GitHub runs a DNS check; once it passes, tick **Enforce HTTPS**
+   (the certificate can take up to an hour to issue after the DNS check).
+3. **Redeploy** — either push to `main` or run the "Deploy to GitHub Pages"
+   workflow by hand. `actions/configure-pages` now reports an empty base path
+   and the new origin, so the build serves from `/`, the sitemap and canonical
+   URLs use the domain, and the verify job checks the live site at the domain.
+   The old `jaunitageorge1.github.io/personal-website/` address redirects
+   there.
+
+Once the domain is live, `robots.txt` starts to matter (see below), and the
+site's default URL in `site.js` — used only outside CI — already reads
+`https://jaunitaflessas.us`.
 
 ### Security headers
 
