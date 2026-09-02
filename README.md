@@ -162,7 +162,7 @@ A failure there cannot undo a deploy; it makes the run red so the problem is
 seen rather than found by a visitor. Run it by hand against any deployed copy:
 
 ```bash
-node scripts/verify-live.mjs https://jaunitageorge1.github.io/personalwebsite/
+node scripts/verify-live.mjs https://jaunitageorge1.github.io/personal-website/
 ```
 
 ### The path prefix
