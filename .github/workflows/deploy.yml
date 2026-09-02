@@ -41,19 +41,21 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      # enablement: true turns Pages on via the API if it is off, using the
-      # pages: write permission above — so the repository needs no manual
-      # setup step. It is a no-op once Pages is already enabled.
+      # Pages has to be switched on once, by hand: Settings → Pages → Build
+      # and deployment → Source: GitHub Actions. The workflow cannot do it —
+      # configure-pages offers `enablement: true`, but creating a Pages site
+      # needs repository-admin rights, and GITHUB_TOKEN's `pages: write` only
+      # covers deploying to a site that already exists. Tried and confirmed:
+      # "Create Pages site failed: Resource not accessible by integration".
       #
-      # It cannot work around a plan restriction: Pages serves private
-      # repositories only on a paid plan. On GitHub Free the repository has to
-      # be public, and this step fails with "Get Pages site failed" until one
-      # of those is true.
+      # Two things make this step fail with "Get Pages site failed":
+      #   - Pages not yet enabled (the one-time setting above);
+      #   - a private repository on GitHub Free — Pages serves private repos
+      #     only on a paid plan, so the repo must be public or the plan
+      #     upgraded.
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       # base_path is /<repo> for a project site and empty once a custom domain
       # is attached, so the same build works either way with no edit here.

@@ -115,15 +115,18 @@ The site deploys to **GitHub Pages** from `.github/workflows/deploy.yml`, on
 every push to `main` (or on demand via *Actions → Deploy to GitHub Pages → Run
 workflow*).
 
-The workflow enables Pages itself (`enablement: true` on
-`actions/configure-pages`), so there is no settings step to remember — with one
-precondition it cannot work around:
+One-time setup, done by hand in the repository settings: **Settings → Pages →
+Build and deployment → Source: GitHub Actions**. The workflow cannot do this
+for you — `actions/configure-pages` offers an `enablement` option, but creating
+a Pages site needs repository-admin rights, and the workflow's `GITHUB_TOKEN`
+only ever has `pages: write`, which covers deploying to a site that already
+exists. (Tried; it fails with *"Resource not accessible by integration"*.)
 
-**GitHub Pages serves private repositories only on a paid plan.** On GitHub
-Free the repository must be public. While neither is true, the deploy fails at
-the Configure Pages step with *"Get Pages site failed"*, whatever the workflow
-does. Either make the repository public, upgrade the plan, or deploy to Netlify
-instead (below) — Netlify serves private repositories on its free tier.
+A second precondition: **GitHub Pages serves private repositories only on a
+paid plan.** On GitHub Free the repository must be public. While either
+precondition is unmet, the deploy fails at the Configure Pages step with *"Get
+Pages site failed"*. The alternative is Netlify (below), which serves private
+repositories on its free tier.
 
 Note what making the repository public exposes: the site itself renders no
 email address anywhere, but `src/_data/site.js` and `src/_data/resumes.js` hold
