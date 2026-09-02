@@ -630,6 +630,13 @@ textarea.input { min-height: 7rem; resize: vertical; }
   max-width: 35rem;
   margin-top: 1.75rem;
 }
+.contact-alt {
+  margin: 0;
+  font-size: var(--fs-15-5);
+  line-height: var(--lead);
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+}
+.contact-alt a { text-decoration: underline; overflow-wrap: anywhere; }
 .contact-note {
   font-size: var(--fs-13);
   line-height: 1.6;

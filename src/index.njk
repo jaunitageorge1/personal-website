@@ -192,7 +192,10 @@ extraScripts: ["/assets/js/contact.js"]
         <label for="cf-topic">What’s this about?</label>
         <select id="cf-topic" name="topic" class="input" required>
           {%- for topic in home.contactTopics %}
+          {#- No blog, no subscriptions to offer. -#}
+          {%- if topic != "Subscribe to the blog" or blog.enabled %}
           <option value="{{ topic }}">{{ topic }}</option>
+          {%- endif %}
           {%- endfor %}
         </select>
       </div>
@@ -211,6 +214,12 @@ extraScripts: ["/assets/js/contact.js"]
       <div class="btn-row contact-actions">
         <a href="{{ site.links.linkedin }}" class="btn btn-ghost">LinkedIn<span class="visually-hidden"> (external site)</span></a>
       </div>
+      {#- The address itself, in plain text with a mailto link, always visible
+          and independent of scripting. Handing off to a mail app only works
+          on a device that has one configured; this is the route for everyone
+          else, and it is copyable into webmail. The owner has chosen to
+          publish the address — it is already public. -#}
+      <p class="contact-alt">Or write to me directly: <a href="mailto:{{ site.form.mailto.user }}@{{ site.form.mailto.domain }}">{{ site.form.mailto.user }}@{{ site.form.mailto.domain }}</a></p>
       {#- Empty at load, and present at load: a live region has to already be in
           the page for what gets put into it to be announced. -#}
       <p class="contact-status" id="contact-status" role="status"></p>

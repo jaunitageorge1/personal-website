@@ -62,7 +62,7 @@ if (mailto) {
 }
 const status = (await p.locator("#contact-status").textContent()).trim();
 check(status.length > 0, "status announced after send", JSON.stringify(status.slice(0, 40) + "…"));
-check(!status.includes("@"), "status text does not print the address", JSON.stringify(status));
+check(status.includes("jaunitaflessas@gmail.com"), "status names the address as the no-mail-app fallback", JSON.stringify(status.slice(-90)));
 
 /* Honeypot: a bot filling every field must be dropped silently. */
 await p.goto(site.origin + "/", { waitUntil: "load" });
@@ -85,19 +85,31 @@ check(await p2.locator("#contact-form noscript").count() === 1, "noscript explan
 check(await p2.locator("#contact-form .contact-actions a").count() === 1, "LinkedIn fallback works without scripting");
 await noJs.close();
 
-/* ---- the address must not be greppable in anything served ---- */
+/* ---- the address is published on purpose: it must be visible, correct and a working link ---- */
+const p3ctx = await b.newContext({ viewport: { width: 1280, height: 900 } });
+await p3ctx.route("**/*", r => r.request().url().startsWith(site.origin) ? r.continue() : r.abort());
+const p3 = await p3ctx.newPage();
+await p3.goto(site.origin + "/", { waitUntil: "load" });
+const alt = p3.locator("#contact .contact-alt a");
+check(await alt.count() === 1, "a plain email link is shown in the contact section");
+check((await alt.getAttribute("href")) === "mailto:jaunitaflessas@gmail.com", "the email link is a mailto to the right address");
+check((await alt.textContent()).trim() === "jaunitaflessas@gmail.com", "the link text is the address itself, so it can be copied");
+check(await alt.isVisible(), "the email link is visible without scripting having to reveal it");
+await p3ctx.close();
+
+/* ---- the résumé documents still assemble their contact line at runtime ---- */
 const { readdir, readFile } = await import("node:fs/promises");
 const walk = async (d) => (await readdir(d, { withFileTypes: true })).reduce(async (acc, e) => {
   const list = await acc; const path = d + "/" + e.name;
   return e.isDirectory() ? list.concat(await walk(path)) : list.concat(path);
 }, Promise.resolve([]));
 const files = (await walk("_site")).filter(f => /\.(html|js|css|xml|txt|svg)$/.test(f));
-const leaks = [];
-for (const f of files) {
+const inMarkup = [];
+for (const f of files.filter(f => /\/resume\/.*index\.html$/.test(f))) {
   const t = await readFile(f, "utf8");
-  if (t.includes("jaunitaflessas@gmail.com")) leaks.push(f.replace(/^_site/, ""));
+  if (t.includes("jaunitaflessas@gmail.com")) inMarkup.push(f.replace(/^_site/, ""));
 }
-check(leaks.length === 0, "address appears in no served text file", leaks.join(", ") || "clean");
+check(inMarkup.length === 0, "résumé pages still fill the contact line by script, not markup", inMarkup.join(", ") || "clean");
 
 await b.close(); site.close();
 console.log("\nContact form\n");
